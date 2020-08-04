@@ -1,6 +1,30 @@
+import 'package:ffi/ffi.dart';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:vaultSDK/vaultSDK.dart';
+
+typedef udContext_Connect_native = Int32 Function(
+    Pointer<IntPtr> context,
+    Pointer<Utf8> url,
+    Pointer<Utf8> applicationName,
+    Pointer<Utf8> email,
+    Pointer<Utf8> password);
+typedef udContext_Connect_dart = int Function(
+    Pointer<IntPtr> context,
+    Pointer<Utf8> url,
+    Pointer<Utf8> applicationName,
+    Pointer<Utf8> email,
+    Pointer<Utf8> password);
 
 void main() {
+  final url = Utf8.toUtf8('https://stg-ubu18.euclideon.com');
+  final appName = Utf8.toUtf8('FlutterApp');
+  final email = Utf8.toUtf8('ssurtees@euclideon.com');
+  final password = Utf8.toUtf8('password');
+  Pointer<IntPtr> contextPtr = allocate();
+  var err = udContext_Connect(contextPtr, url, appName, email, password);
+
   runApp(MyApp());
 }
 
@@ -33,11 +57,9 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
-
   // This class is the configuration for the state. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
@@ -59,7 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
     });
   }
 
