@@ -38,7 +38,9 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          LoginPage.routeName: (context) => LoginPage(),
+          LoginPage.routeName: (context) => LoginPage(
+                vdkContext: vdkContext,
+              ),
           MyHomePage.routeName: (context) => MyHomePage(
               title: 'Flutter Demo Home Page', vdkContext: vdkContext)
         });

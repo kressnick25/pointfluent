@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vaultSDK/udContext.dart';
 
 import '../util/Result.dart';
 
@@ -11,8 +14,10 @@ class AuthDetails {
 }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  LoginPage({Key key, this.vdkContext}) : super(key: key);
+
   static const routeName = '/';
+  final Pointer<IntPtr> vdkContext;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -21,24 +26,23 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  Result _authResult = Result();
+  AuthResult _authResult = AuthResult();
   AuthDetails user = AuthDetails();
 
-  // TODO Call vdkCreateContext here when implemneted
-  Future<int> mock_vdkCreateContext(String username, String password) {
-    return Future.delayed(const Duration(milliseconds: 1000), () => 0);
-  }
-
-  void onSubmit() async {
+  void onSubmit() {
     _formKey.currentState.save();
     setState(() {
       _isLoading = true;
     });
-    final res = await mock_vdkCreateContext(user.username, user.password);
+
+    final err = UdContext.connect(
+        widget.vdkContext, 'kressnick25@gmail.com', 'password');
+
     setState(() {
       _isLoading = false;
-      _authResult.value = res;
+      _authResult.value = err;
     });
+
     if (_authResult.ok) {
       // TODO set global context
       // Provide user details to next screen
@@ -46,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
           arguments:
               AuthDetails(username: user.username, password: user.password));
     } else {
-      _authResult.message = 'Details were incorrect, please try again.';
+      _authResult.setErrorMessage();
     }
   }
 
