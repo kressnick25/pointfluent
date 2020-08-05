@@ -1,34 +1,18 @@
-import 'package:ffi/ffi.dart';
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
-import 'package:vaultSDK/vaultSDK.dart';
-
-typedef udContext_Connect_native = Int32 Function(
-    Pointer<IntPtr> context,
-    Pointer<Utf8> url,
-    Pointer<Utf8> applicationName,
-    Pointer<Utf8> email,
-    Pointer<Utf8> password);
-typedef udContext_Connect_dart = int Function(
-    Pointer<IntPtr> context,
-    Pointer<Utf8> url,
-    Pointer<Utf8> applicationName,
-    Pointer<Utf8> email,
-    Pointer<Utf8> password);
+import 'package:vaultSDK/udContext.dart';
+import 'package:vaultSDK/udError.dart';
+import 'package:flutter/foundation.dart';
 
 void main() {
-  final url = Utf8.toUtf8('https://stg-ubu18.euclideon.com');
-  final appName = Utf8.toUtf8('FlutterApp');
-  final email = Utf8.toUtf8('ssurtees@euclideon.com');
-  final password = Utf8.toUtf8('password');
-  Pointer<IntPtr> contextPtr = allocate();
-  var err = udContext_Connect(contextPtr, url, appName, email, password);
-
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  static Pointer<IntPtr> vdkContext = allocate();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -50,13 +34,13 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page', vdkContext: vdkContext),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.vdkContext}) : super(key: key);
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -66,21 +50,26 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final Pointer<IntPtr> vdkContext;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  vdkError _errNo;
+  int _timesPressed = 0;
 
-  void _incrementCounter() {
+  void _fetch() async {
+    var err = UdContext.connect(
+        widget.vdkContext, 'kressnick25@gmail.com', 'password');
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
+      _errNo = err;
     });
   }
 
@@ -119,20 +108,26 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              'Erro Code = $_errNo',
             ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              "Times pressed=: $_timesPressed",
             ),
+            RaisedButton(
+              onPressed: _fetch,
+              child: Text("Fetch"),
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => setState(() {
+          _timesPressed += 1;
+        }),
         tooltip: 'Increment',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
