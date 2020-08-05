@@ -5,3 +5,8 @@
 .pub/
 
 build/
+
+ios/Classes/*.h
+ios/Classes/*.m
+
+android/src/main/jniLibs/
