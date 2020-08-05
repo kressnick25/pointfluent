@@ -41,14 +41,14 @@ class MyApp extends StatelessWidget {
           LoginPage.routeName: (context) => LoginPage(
                 vdkContext: vdkContext,
               ),
-          MyHomePage.routeName: (context) => MyHomePage(
-              title: 'Flutter Demo Home Page', vdkContext: vdkContext)
+          MyHomePage.routeName: (context) =>
+              MyHomePage(title: 'Flutter Demo Home Page')
         });
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.vdkContext}) : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key);
   static const routeName = '/home';
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -60,28 +60,13 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  final Pointer<IntPtr> vdkContext;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  vdkError _errNo;
   int _timesPressed = 0;
-
-  void _fetch() async {
-    var err = UdContext.connect(
-        widget.vdkContext, 'kressnick25@gmail.com', 'password');
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _errNo = err;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,14 +104,13 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Erro Code = $_errNo',
-            ),
-            Text(
               "Times pressed=: $_timesPressed",
             ),
             RaisedButton(
-              onPressed: _fetch,
-              child: Text("Fetch"),
+              onPressed: () => setState(() {
+                _timesPressed++;
+              }),
+              child: Text("+"),
             )
           ],
         ),
