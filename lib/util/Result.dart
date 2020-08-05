@@ -25,6 +25,13 @@ class AuthResult extends Result<vdkError> {
     return value == vdkError.vE_Success;
   }
 
+  // Returns a string representation of the vdkError value
+  // without prefixed 'vdkError.'
+  String get type {
+    String val = value.toString();
+    return val.substring(val.lastIndexOf('.')).substring(1);
+  }
+
   void setErrorMessage() {
     switch (this.value) {
       case vdkError.vE_AuthFailure:
@@ -51,7 +58,7 @@ class AuthResult extends Result<vdkError> {
 
       default:
         {
-          this.message = "An unknown error has occured.";
+          this.message = "An unknown error has occured. Code ${this.type}";
         }
         break;
     }
