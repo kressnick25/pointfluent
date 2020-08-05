@@ -35,8 +35,8 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
 
-    final err = UdContext.connect(
-        widget.vdkContext, 'kressnick25@gmail.com', 'password');
+    final err =
+        UdContext.connect(widget.vdkContext, user.username, user.password);
 
     setState(() {
       _isLoading = false;
