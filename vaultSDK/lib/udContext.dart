@@ -24,6 +24,11 @@ class UdContext {
     final uPassword = Utf8.toUtf8(password);
     var err = udContext_Connect(udContext, uUrl, uAppName, uEmail, uPassword);
 
+    free(uUrl);
+    free(uAppName);
+    free(uEmail);
+    free(uPassword);
+
     return vdkError.values[err];
   }
 }
