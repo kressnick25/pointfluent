@@ -25,6 +25,7 @@ class UdConfig {
   }
 }
 
+// TODO change Int8 ignore -> Int32 ingore upon migration to udSDK
 typedef udConfig_IgnoreCertificateVerification_native = Int32 Function(
     Int8 ignore);
 typedef udConfig_IgnoreCertificateVerification_dart = int Function(int ignore);
