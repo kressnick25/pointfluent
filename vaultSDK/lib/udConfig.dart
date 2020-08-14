@@ -15,24 +15,22 @@ class UdConfig {
 
   // Allows VDK to connect to server with an unrecognized certificate authority, sometimes required for self-signed certificates or poorly configured proxies.
   // Used for workaround where calling UdContext.connect will always return vE_SecurityFailure
-  static vdkError ignoreCertificateVerification(bool ignore) {
+  static udError ignoreCertificateVerification(bool ignore) {
     // Cast boolean to C int where 0 == False and 1 == True
-    int boolean = 0;
-    if (ignore) boolean = 1;
-    var err = udConfig_IgnoreCertificateVerification(boolean);
+    int ignoreVal = ignore ? 1 : 0;
+    var err = udConfig_IgnoreCertificateVerification(ignoreVal);
 
-    return vdkError.values[err];
+    return udError.values[err];
   }
 }
 
-// TODO change Int8 ignore -> Int32 ingore upon migration to udSDK
 typedef udConfig_IgnoreCertificateVerification_native = Int32 Function(
-    Int8 ignore);
+    Int32 ignore);
 typedef udConfig_IgnoreCertificateVerification_dart = int Function(int ignore);
 
 final udConfig_IgnoreCertificateVerificationPointer = vdkLib
     .lookup<NativeFunction<udConfig_IgnoreCertificateVerification_native>>(
-        'vdkConfig_IgnoreCertificateVerification');
+        'udConfig_IgnoreCertificateVerification');
 
 final udConfig_IgnoreCertificateVerification =
     udConfig_IgnoreCertificateVerificationPointer
