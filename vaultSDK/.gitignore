@@ -1,0 +1,16 @@
+.DS_Store
+.dart_tool/
+
+.packages
+.pub/
+
+build/
+
+# vdk header files
+ios/Classes/*.h
+ios/Classes/*.m
+!ios/Classes/VaultSDKPlugin.h
+!ios/Classes/VaultSDKPlugin.m
+
+# vdk compiled libs
+android/src/main/jniLibs/

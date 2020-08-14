@@ -1,4 +1,10 @@
+import 'dart:ffi';
+
+import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
+import 'package:vaultSDK/udContext.dart';
+import 'package:vaultSDK/udError.dart';
+import 'package:flutter/foundation.dart';
 
 import 'auth/login.dart';
 
@@ -7,6 +13,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  static Pointer<IntPtr> vdkContext = allocate();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,10 +38,11 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          LoginPage.routeName: (context) => LoginPage(),
-          MyHomePage.routeName: (context) => MyHomePage(
-                title: 'Flutter Demo Home Page',
-              )
+          LoginPage.routeName: (context) => LoginPage(
+                vdkContext: vdkContext,
+              ),
+          MyHomePage.routeName: (context) =>
+              MyHomePage(title: 'Flutter Demo Home Page')
         });
   }
 }
@@ -45,7 +54,6 @@ class MyHomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
-
   // This class is the configuration for the state. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
@@ -58,18 +66,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  int _timesPressed = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -106,20 +103,26 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Current Username ${args.username}'),
-            Text('Current user password ${args.password}'),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              "Times pressed=: $_timesPressed",
             ),
+            RaisedButton(
+              onPressed: () => setState(() {
+                _timesPressed++;
+              }),
+              child: Text("+"),
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => setState(() {
+          _timesPressed += 1;
+        }),
         tooltip: 'Increment',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
