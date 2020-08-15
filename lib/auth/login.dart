@@ -53,10 +53,12 @@ class _LoginPageState extends State<LoginPage> {
     if (_authResult.ok) {
       // TODO set global context
       // use popAndPush to stop user pressing back to get to login screen
-      Navigator.popAndPushNamed(context, '/home',
-          // Provide user details to next screen
-          arguments:
-              AuthDetails(username: user.username, password: user.password));
+      Navigator.popAndPushNamed(
+        context, '/home',
+        // Provide user details to next screen
+        // arguments:
+        //     AuthDetails(username: user.username, password: user.password)
+      );
     } else {
       _authResult.setErrorMessage();
     }
@@ -124,13 +126,17 @@ class _LoginPageState extends State<LoginPage> {
                 user.password = value;
               },
             ),
-            CheckboxListTile(
-                title: Text('Ignore Certificate Security'),
-                controlAffinity: ListTileControlAffinity.leading,
-                value: _ignoreCert,
-                onChanged: (bool value) {
-                  _updateCertVal(value);
-                }),
+            SizedBox(
+              width: 500,
+              height: 50,
+              child: CheckboxListTile(
+                  title: Text('Ignore Certificate Security'),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _ignoreCert,
+                  onChanged: (bool value) {
+                    _updateCertVal(value);
+                  }),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(
