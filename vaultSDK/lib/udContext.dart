@@ -29,7 +29,18 @@ class UdContext {
     free(uEmail);
     free(uPassword);
 
-    return udError.values[err];
+    return udErrorValue(err);
+  }
+
+  /// Disconnects and destroys a udContext object that was created using connect
+  ///
+  /// endSession ends the session entirely and cannot be resumed
+  static udError disconnect(Pointer<IntPtr> udContext,
+      {bool endSession = true}) {
+    int endSessionVal = endSession ? 1 : 0;
+    final err = udContext_Disconnect(udContext, endSessionVal);
+
+    return udErrorValue(err);
   }
 }
 
@@ -53,3 +64,18 @@ final udContext_ConnectPointer = udSdkLib
 
 final udContext_Connect =
     udContext_ConnectPointer.asFunction<udContext_Connect_dart>();
+
+// udContext_Disconnect
+typedef udContext_Disconnect_native = Int32 Function(
+  Pointer<IntPtr> context,
+  Uint32 endSession,
+);
+typedef udContext_Disconnect_dart = int Function(
+  Pointer<IntPtr> context,
+  int endSession,
+);
+final udContext_DisconnectPointer =
+    udSdkLib.lookup<NativeFunction<udContext_Disconnect_native>>(
+        'udContext_Disconnect');
+final udContext_Disconnect =
+    udContext_DisconnectPointer.asFunction<udContext_Disconnect_dart>();
