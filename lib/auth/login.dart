@@ -3,8 +3,12 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vaultSDK/udContext.dart';
-
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../util/Result.dart';
+import '../util/Constants.dart' as Constants;
+import '../widgets/emptyWidget.dart';
+import '../widgets/KeyboardVisibilityBuilder.dart';
 
 class AuthDetails {
   String username;
@@ -18,7 +22,6 @@ class LoginPage extends StatefulWidget {
 
   static const routeName = '/';
   final Pointer<IntPtr> udContext;
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -54,6 +57,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  _launchUrl() async {
+    const url = Constants.url_udStreamRegister;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launc $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +78,13 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              KeyboardVisibilityBuilder(
+                  builder: (context, child, isKeyboardVisible) {
+                    return isKeyboardVisible
+                        ? emptyWidget
+                        : Image.asset(Constants.img_pointfluentLogo500);
+                  },
+                  child: Image.asset(Constants.img_pointfluentLogo500)),
               TextFormField(
                 decoration: const InputDecoration(
                   hintText: 'Email or Username',
@@ -104,7 +123,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Text(_authResult.error ? _authResult.message : '',
-                  style: TextStyle(color: Colors.red))
+                  style: TextStyle(color: Colors.red)),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: RaisedButton(
+                  onPressed: _launchUrl,
+                  child: new Text('Register'),
+                ),
+              ),
             ],
           ),
         ),
