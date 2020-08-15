@@ -40,7 +40,8 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isLoading = true;
     });
-    // Only call change if actually new val
+
+    // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
     final err =
         UdContext.connect(widget.udContext, user.username, user.password);
@@ -51,13 +52,11 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (_authResult.ok) {
-      // TODO set global context
+      // TODO set global udContext
       // use popAndPush to stop user pressing back to get to login screen
       Navigator.popAndPushNamed(
-        context, '/home',
-        // Provide user details to next screen
-        // arguments:
-        //     AuthDetails(username: user.username, password: user.password)
+        context,
+        '/home',
       );
     } else {
       _authResult.setErrorMessage();
