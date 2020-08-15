@@ -14,10 +14,10 @@ class AuthDetails {
 }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.vdkContext}) : super(key: key);
+  LoginPage({Key key, this.udContext}) : super(key: key);
 
   static const routeName = '/';
-  final Pointer<IntPtr> vdkContext;
+  final Pointer<IntPtr> udContext;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final err =
-        UdContext.connect(widget.vdkContext, user.username, user.password);
+        UdContext.connect(widget.udContext, user.username, user.password);
 
     setState(() {
       _isLoading = false;

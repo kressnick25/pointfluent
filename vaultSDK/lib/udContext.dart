@@ -16,7 +16,7 @@ class UdContext {
   }
 
   // Call these functions in flutter widgets
-  static vdkError connect(Pointer<IntPtr> udContext, email, password,
+  static udError connect(Pointer<IntPtr> udContext, email, password,
       [url = 'https://udstream.euclideon.com', appName = 'Pointfluent']) {
     final uUrl = Utf8.toUtf8(url);
     final uAppName = Utf8.toUtf8(appName);
@@ -29,7 +29,7 @@ class UdContext {
     free(uEmail);
     free(uPassword);
 
-    return vdkError.values[err];
+    return udError.values[err];
   }
 }
 
@@ -49,7 +49,7 @@ typedef udContext_Connect_dart = int Function(
     Pointer<Utf8> password);
 
 final udContext_ConnectPointer = vdkLib
-    .lookup<NativeFunction<udContext_Connect_native>>('vdkContext_Connect');
+    .lookup<NativeFunction<udContext_Connect_native>>('udContext_Connect');
 
 final udContext_Connect =
     udContext_ConnectPointer.asFunction<udContext_Connect_dart>();

@@ -13,7 +13,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  static Pointer<IntPtr> vdkContext = allocate();
+  static Pointer<IntPtr> udContext = allocate();
 
   // This widget is the root of your application.
   @override
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           LoginPage.routeName: (context) => LoginPage(
-                vdkContext: vdkContext,
+                udContext: udContext,
               ),
           MyHomePage.routeName: (context) =>
               MyHomePage(title: 'Flutter Demo Home Page')

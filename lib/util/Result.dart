@@ -9,20 +9,20 @@ abstract class Result<T> {
   void setErrorMessage();
 }
 
-class AuthResult extends Result<vdkError> {
-  vdkError value;
+class AuthResult extends Result<udError> {
+  udError value;
   String message;
 
   AuthResult() : super();
 
   bool get error {
     if (value == null) return false;
-    return value != vdkError.vE_Success;
+    return value != udError.udE_Success;
   }
 
   bool get ok {
     if (value == null) return false;
-    return value == vdkError.vE_Success;
+    return value == udError.udE_Success;
   }
 
   // Returns a string representation of the vdkError value
@@ -34,20 +34,20 @@ class AuthResult extends Result<vdkError> {
 
   void setErrorMessage() {
     switch (this.value) {
-      case vdkError.vE_AuthFailure:
+      case udError.udE_AuthFailure:
         {
           this.message = "Invalid credentials, please try again.";
         }
         break;
 
-      case vdkError.vE_SecurityFailure:
+      case udError.udE_SecurityFailure:
         {
           // TODO alert screen with option to change setting
           this.message = "Security failure, try disabling cert verification.";
         }
         break;
 
-      case vdkError.vE_ProxyError:
+      case udError.udE_ProxyError:
         {
           this.message =
               "There was an issue with the provided proxy information.";
