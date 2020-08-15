@@ -30,7 +30,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _ignoreCert = false;
-  bool _ignoreCertPrev = false;
   bool _isLoading = false;
   AuthResult _authResult = AuthResult();
   AuthDetails user = AuthDetails();
@@ -41,9 +40,7 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
     // Only call change if actually new val
-    if (_ignoreCert != _ignoreCertPrev) {
-      UdConfig.ignoreCertificateVerification(_ignoreCert);
-    }
+    UdConfig.ignoreCertificateVerification(_ignoreCert);
     final err =
         UdContext.connect(widget.udContext, user.username, user.password);
 
@@ -54,8 +51,9 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_authResult.ok) {
       // TODO set global context
-      // Provide user details to next screen
-      Navigator.pushNamed(context, '/home',
+      // use popAndPush to stop user pressing back to get to login screen
+      Navigator.popAndPushNamed(context, '/home',
+          // Provide user details to next screen
           arguments:
               AuthDetails(username: user.username, password: user.password));
     } else {
@@ -74,8 +72,7 @@ class _LoginPageState extends State<LoginPage> {
 
   _updateCertVal(bool newVal) {
     setState(() {
-      _ignoreCertPrev = _ignoreCert;
-      _ignoreCert = newVal;
+      _ignoreCert = !_ignoreCert;
     });
   }
 
