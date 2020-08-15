@@ -4,7 +4,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 
-import 'vdkLib.dart';
+import 'udSdkLib.dart';
 import 'udError.dart';
 
 class UdContext {
@@ -48,7 +48,7 @@ typedef udContext_Connect_dart = int Function(
     Pointer<Utf8> email,
     Pointer<Utf8> password);
 
-final udContext_ConnectPointer = vdkLib
+final udContext_ConnectPointer = udSdkLib
     .lookup<NativeFunction<udContext_Connect_native>>('udContext_Connect');
 
 final udContext_Connect =

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:ffi';
 
-final DynamicLibrary vdkLib = Platform.isAndroid
+final DynamicLibrary udSdkLib = Platform.isAndroid
     ? DynamicLibrary.open("libudSDK.so")
     : DynamicLibrary.process();

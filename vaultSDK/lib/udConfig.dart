@@ -1,6 +1,6 @@
 import 'dart:ffi';
 
-import 'vdkLib.dart';
+import 'udSdkLib.dart';
 import 'udError.dart';
 
 class UdConfig {
@@ -28,7 +28,7 @@ typedef udConfig_IgnoreCertificateVerification_native = Int32 Function(
     Int32 ignore);
 typedef udConfig_IgnoreCertificateVerification_dart = int Function(int ignore);
 
-final udConfig_IgnoreCertificateVerificationPointer = vdkLib
+final udConfig_IgnoreCertificateVerificationPointer = udSdkLib
     .lookup<NativeFunction<udConfig_IgnoreCertificateVerification_native>>(
         'udConfig_IgnoreCertificateVerification');
 
