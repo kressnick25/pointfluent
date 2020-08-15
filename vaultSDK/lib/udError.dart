@@ -40,3 +40,13 @@ enum udError {
 
   udE_Count //!< Internally used to verify return values
 }
+
+/// Return the udError value from corrensponding error code
+udError udErrorValue(int errorNum) {
+  final maxErrorCode = udError.values.length - 1;
+  if (errorNum > maxErrorCode) {
+    // return catch-all value
+    return udError.udE_Failure;
+  }
+  return udError.values[errorNum];
+}
