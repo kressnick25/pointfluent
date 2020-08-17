@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Image.asset(Constants.img_pointfluentLogo500)),
             TextFormField(
               decoration: const InputDecoration(
-                hintText: 'Email or Username',
+                hintText: 'Email',
               ),
               validator: (value) {
                 return value.isEmpty ? 'Please enter your email' : null;
