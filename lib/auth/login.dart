@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                 hintText: 'Email or Username',
               ),
               validator: (value) {
-                return value.isEmpty ? 'Please enter your username' : null;
+                return value.isEmpty ? 'Please enter your email' : null;
               },
               onSaved: (String value) {
                 user.username = value;
