@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
+import 'auth/TransformDemo.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,8 +27,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.cyan,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/',
+        initialRoute: '/transform',
         routes: {
+          '/painter': (context) => CustomPainterDemo(),
+          '/transform': (context) => TransformDemo(),
           LoginPage.routeName: (context) => LoginPage(
                 udContext: udContext,
               ),
