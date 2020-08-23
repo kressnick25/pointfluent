@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
-import 'dart:async';
 import 'dart:developer';
+
+import '../util/Constants.dart';
 
 class HomePage extends StatelessWidget {
   static const routeName = '/home';
@@ -40,8 +40,12 @@ class HomePage extends StatelessWidget {
                 leading: Icon(Icons.folder),
                 trailing: Icon(Icons.keyboard_arrow_right),
                 onTap: () async {
-                  _filepath = await FilePicker.getFilePath();
-                  log(_filepath);
+                  _filepath = await FilePicker.getFilePath(
+                      type: FileType.custom,
+                      allowedExtensions: [
+                        fileExtension_euclideonUnlimitedDetailModel
+                      ]);
+                  log(_filepath ?? "User did not select a file");
                 }),
           ),
           Card(
