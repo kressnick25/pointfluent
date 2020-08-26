@@ -16,7 +16,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   static Pointer<IntPtr> udContext = allocate();
-
+  static invalidCode;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
