@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_apk:
-    runs-on: [ubuntu-latest, windows-latest]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-java@v1
