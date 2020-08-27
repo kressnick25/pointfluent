@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:ffi';
-import 'dart:web_gl';
 
 import 'package:ffi/ffi.dart';
 
