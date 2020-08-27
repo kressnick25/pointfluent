@@ -13,6 +13,20 @@ abstract class ArrayHelper {
     }
   }
 
+  List get values {
+    List newList = new List();
+    for (int i = 0; i < this.length; i++) {
+      newList.add(this[i]);
+    }
+    return newList;
+  }
+
+  set values(List list) {
+    for (int i = 0; i < this.length; i++) {
+      this[i] = list[i];
+    }
+  }
+
   dynamic operator [](int index) {}
 
   void operator []=(int index, dynamic value) {}
