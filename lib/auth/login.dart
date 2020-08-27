@@ -23,7 +23,7 @@ class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.udContext}) : super(key: key);
 
   static const routeName = '/';
-  final Pointer<IntPtr> udContext;
+  final UdContext udContext;
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -43,8 +43,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
-    final err =
-        UdContext.connect(widget.udContext, user.username, user.password);
+    final err = widget.udContext.connect(user.username, user.password);
 
     setState(() {
       _isLoading = false;

@@ -1,28 +1,28 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:web_gl';
 
 import 'package:ffi/ffi.dart';
-import 'package:flutter/services.dart';
 
 import 'udSdkLib.dart';
 import 'udError.dart';
 
 class UdContext {
-  static const MethodChannel _channel = const MethodChannel('udContext');
+  Pointer<IntPtr> _context;
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+  UdContext() {
+    this._context = allocate();
   }
 
   // Call these functions in flutter widgets
-  static udError connect(Pointer<IntPtr> udContext, email, password,
+  udError connect(email, password,
       [url = 'https://udstream.euclideon.com', appName = 'Pointfluent']) {
     final uUrl = Utf8.toUtf8(url);
     final uAppName = Utf8.toUtf8(appName);
     final uEmail = Utf8.toUtf8(email);
     final uPassword = Utf8.toUtf8(password);
-    var err = udContext_Connect(udContext, uUrl, uAppName, uEmail, uPassword);
+    var err =
+        udContext_Connect(this._context, uUrl, uAppName, uEmail, uPassword);
 
     free(uUrl);
     free(uAppName);
@@ -35,12 +35,16 @@ class UdContext {
   /// Disconnects and destroys a udContext object that was created using connect
   ///
   /// endSession ends the session entirely and cannot be resumed
-  static udError disconnect(Pointer<IntPtr> udContext,
-      {bool endSession = true}) {
+  udError disconnect({bool endSession = true}) {
     int endSessionVal = endSession ? 1 : 0;
-    final err = udContext_Disconnect(udContext, endSessionVal);
+    final err = udContext_Disconnect(this._context, endSessionVal);
 
+    this._cleanup();
     return udErrorValue(err);
+  }
+
+  void _cleanup() {
+    free(this._context);
   }
 }
 
