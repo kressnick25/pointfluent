@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
           LoginPage.routeName: (context) => LoginPage(
                 udContext: udContext,
               ),
-          HomePage.routeName: (context) => HomePage(),
+          HomePage.routeName: (context) => HomePage(
+                udContext: udContext,
+              ),
           SettingsPage.routeName: (context) => SettingsPage(),
         });
   }
