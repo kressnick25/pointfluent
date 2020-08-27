@@ -55,17 +55,21 @@ class UdException implements Exception {
   String _message;
 
   UdException(udError errorVal) {
-    this._message = setMessage(errorVal);
+    this._message = _errorMessage(errorVal);
   }
 
-  String setMessage(udError errorVal) {
+  String _errorMessage(udError errorVal) {
     switch (errorVal) {
       case udError.udE_AuthFailure:
-        return "Failed to athenticate";
+        return "Invalid credentials, please try again.";
       case udError.udE_SecurityFailure:
-        return "Security error. Try disabling cert security";
+        return "Security failure, try disabling cert verification.";
+      case udError.udE_ProxyError:
+        return "There was an issue with the provided proxy information.";
+
+      // Handle more errors here
       default:
-        return "An error has occured";
+        return "An unknown error has occured. Code $errorVal";
     }
   }
 
