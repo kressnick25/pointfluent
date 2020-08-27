@@ -2,10 +2,9 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
-import 'udError.dart';
 import 'udSdkLib.dart';
 
-class UdAttributeSet {
+class UdAttributeSet extends UdSDKClass {
   Pointer<udAttributeSet> _attributeSet;
   UdAttributeSet() {
     this._attributeSet = allocate();
@@ -19,19 +18,17 @@ class UdAttributeSet {
   /// @return A udError value based on the result of the creation of the attribute set.
   /// @note The application should call udAttributeSet_Free with pAttributeSet to destroy the object once it's no longer needed.
   ///
-  udError create(udAttributeSet content, int additionalCustomAttributes) {
-    var err = _udAttributeSet_Create(
-        _attributeSet, content, additionalCustomAttributes);
-    return udErrorValue(err);
+  void create(udAttributeSet content, int additionalCustomAttributes) {
+    handleUdError(_udAttributeSet_Create(
+        _attributeSet, content, additionalCustomAttributes));
   }
 
   /// Free the memory created by a call to udAttributeSet_Generate
   ///
   /// @param pAttributeSet The attribute set to free the resources of
   /// @return A udError value based on the result of the destruction of the attribute set.
-  udError destroy() {
-    var err = _udAttributeSet_Destroy(_attributeSet);
-    return udErrorValue(err);
+  void destroy() {
+    handleUdError(_udAttributeSet_Destroy(_attributeSet));
   }
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
@@ -40,13 +37,14 @@ class UdAttributeSet {
   /// @param attribute The enum value of the attribute
   /// @param pOffset This pointer will be written to with the value of the offset if it is found
   /// @return A udError value based on the result of writing the offset to pOffset
-  udError getOffsetOfStandardAttribute(udStdAttribute attribute, int offset) {
+  void getOffsetOfStandardAttribute(udStdAttribute attribute, int offset) {
     final Pointer<Uint32> pOffset = allocate();
     pOffset.value = offset;
-    var err = _udAttributeSet_GetOffsetOfStandardAttribute(
+    final err = _udAttributeSet_GetOffsetOfStandardAttribute(
         _attributeSet, attribute, pOffset);
     free(pOffset);
-    return udErrorValue(err);
+
+    handleUdError(err);
   }
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
@@ -55,13 +53,12 @@ class UdAttributeSet {
   /// @param attribute The enum value of the attribute
   /// @param pOffset This pointer will be written to with the value of the offset if it is found
   /// @return A udError value based on the result of writing the offset to pOffset
-  udError getOffsetOfNamedAttribute(String name, int offset) {
+  void getOffsetOfNamedAttribute(String name, int offset) {
     final Pointer<Uint32> pOffset = allocate();
     final pName = Utf8.toUtf8(name);
     pOffset.value = offset;
-    var err = _udAttributeSet_GetOffsetOfNamedAttribute(
-        _attributeSet, pName, pOffset);
-    return udErrorValue(err);
+    handleUdError(_udAttributeSet_GetOffsetOfNamedAttribute(
+        _attributeSet, pName, pOffset));
   }
 }
 
@@ -230,6 +227,7 @@ class udAttributeSet extends Struct {
   @Uint32()
   int allocated;
 
+  // TODO properly allocate
   /// this contains the actual information on the attributes
   Pointer<udAttributeDescriptor> pDescriptors;
 }
