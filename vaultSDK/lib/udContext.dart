@@ -5,9 +5,8 @@ import 'dart:web_gl';
 import 'package:ffi/ffi.dart';
 
 import 'udSdkLib.dart';
-import 'udError.dart';
 
-class UdContext {
+class UdContext extends UdSDKClass {
   Pointer<IntPtr> _context;
 
   UdContext() {
@@ -17,7 +16,7 @@ class UdContext {
   get address => this._context;
 
   // Call these functions in flutter widgets
-  udError connect(email, password,
+  void connect(email, password,
       [url = 'https://udstream.euclideon.com', appName = 'Pointfluent']) {
     final uUrl = Utf8.toUtf8(url);
     final uAppName = Utf8.toUtf8(appName);
@@ -31,18 +30,17 @@ class UdContext {
     free(uEmail);
     free(uPassword);
 
-    return udErrorValue(err);
+    handleUdError(err);
   }
 
   /// Disconnects and destroys a udContext object that was created using connect
   ///
   /// endSession ends the session entirely and cannot be resumed
-  udError disconnect({bool endSession = true}) {
+  void disconnect({bool endSession = true}) {
     int endSessionVal = endSession ? 1 : 0;
-    final err = udContext_Disconnect(this._context, endSessionVal);
+    handleUdError(udContext_Disconnect(this._context, endSessionVal));
 
     this._cleanup();
-    return udErrorValue(err);
   }
 
   void _cleanup() {
