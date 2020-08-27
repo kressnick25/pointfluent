@@ -50,3 +50,27 @@ udError udErrorValue(int errorNum) {
   }
   return udError.values[errorNum];
 }
+
+class UdException implements Exception {
+  String _message;
+
+  UdException(udError errorVal) {
+    this._message = setMessage(errorVal);
+  }
+
+  String setMessage(udError errorVal) {
+    switch (errorVal) {
+      case udError.udE_AuthFailure:
+        return "Failed to athenticate";
+      case udError.udE_SecurityFailure:
+        return "Security error. Try disabling cert security";
+      default:
+        return "An error has occured";
+    }
+  }
+
+  @override
+  String toString() {
+    return _message;
+  }
+}
