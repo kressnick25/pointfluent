@@ -14,6 +14,8 @@ class UdContext {
     this._context = allocate();
   }
 
+  get address => this._context;
+
   // Call these functions in flutter widgets
   udError connect(email, password,
       [url = 'https://udstream.euclideon.com', appName = 'Pointfluent']) {
