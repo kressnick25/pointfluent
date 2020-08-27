@@ -8,17 +8,17 @@ import 'udContext.dart';
 
 class UdPointCloud extends UdSDKClass {
   Pointer<IntPtr> _pointCloud;
-  Pointer<udPointCloudHeader> _header;
+  udPointCloudHeader header;
 
   UdPointCloud() {
     this._pointCloud = allocate();
-    this._header = allocate();
+    this.header = udPointCloudHeader.allocate();
   }
 
   void load(UdContext udContext, String modelLocation) {
     final pModelLocation = Utf8.toUtf8(modelLocation);
-    final err = _udPointCloud_Load(
-        udContext.address, this._pointCloud, pModelLocation, this._header);
+    final err = _udPointCloud_Load(udContext.address, this._pointCloud,
+        pModelLocation, this.header.addressOf);
     free(pModelLocation);
 
     handleUdError(err);
@@ -26,18 +26,18 @@ class UdPointCloud extends UdSDKClass {
 
   void unLoad() {
     handleUdError(_udPointCloud_Unload(this._pointCloud));
-    _cleanup();
   }
 
   void getHeader(UdContext udContext) {
-    handleUdError(_udPointCloud_GetHeader(udContext.address, this._header));
+    handleUdError(
+        _udPointCloud_GetHeader(udContext.address, this.header.addressOf));
   }
 
   //udError getMetaData() {}
 
-  void _cleanup() {
+  void cleanup() {
     free(this._pointCloud);
-    free(this._header);
+    free(this.header.addressOf);
   }
 }
 
