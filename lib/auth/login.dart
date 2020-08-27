@@ -8,10 +8,10 @@ import 'package:vaultSDK/udConfig.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../util/Result.dart';
 import '../util/Constants.dart' as Constants;
 import '../widgets/emptyWidget.dart';
 import '../widgets/KeyboardVisibilityBuilder.dart';
+import '../widgets/ErrorMsg.dart';
 
 class AuthDetails {
   String username;
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                     _isLoading ? CircularProgressIndicator() : Text('Submit'),
               ),
             ),
-            Text(_errMessage ?? '', style: TextStyle(color: Colors.red)),
+            ErrorMsg(message: _errMessage),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(
