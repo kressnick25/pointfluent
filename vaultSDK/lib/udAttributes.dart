@@ -33,32 +33,34 @@ class UdAttributeSet extends UdSDKClass {
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
   ///
-  /// @param pAttributeSet The attribute set to get the offset for
-  /// @param attribute The enum value of the attribute
-  /// @param pOffset This pointer will be written to with the value of the offset if it is found
-  /// @return A udError value based on the result of writing the offset to pOffset
-  void getOffsetOfStandardAttribute(int udStdAttribute, int offset) {
+  /// `attribute` must be a value of the enum `udStdAttribute`
+  int getOffsetOfStandardAttribute(int attribute) {
     final Pointer<Uint32> pOffset = allocate();
-    pOffset.value = offset;
-    final err = _udAttributeSet_GetOffsetOfStandardAttribute(
-        _attributeSet, udStdAttribute, pOffset);
-    free(pOffset);
-
-    handleUdError(err);
+    try {
+      handleUdError(_udAttributeSet_GetOffsetOfStandardAttribute(
+          _attributeSet, attribute, pOffset));
+      return pOffset.value;
+    } catch (err) {
+      throw err;
+    } finally {
+      free(pOffset);
+    }
   }
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
-  ///
-  /// @param pAttributeSet The attribute set to get the offset for
-  /// @param attribute The enum value of the attribute
-  /// @param pOffset This pointer will be written to with the value of the offset if it is found
-  /// @return A udError value based on the result of writing the offset to pOffset
-  void getOffsetOfNamedAttribute(String name, int offset) {
+  int getOffsetOfNamedAttribute(String name) {
     final Pointer<Uint32> pOffset = allocate();
     final pName = Utf8.toUtf8(name);
-    pOffset.value = offset;
-    handleUdError(_udAttributeSet_GetOffsetOfNamedAttribute(
-        _attributeSet, pName, pOffset));
+    try {
+      handleUdError(_udAttributeSet_GetOffsetOfNamedAttribute(
+          _attributeSet, pName, pOffset));
+      return pOffset.value;
+    } catch (err) {
+      throw err;
+    } finally {
+      free(pName);
+      free(pOffset);
+    }
   }
 }
 
