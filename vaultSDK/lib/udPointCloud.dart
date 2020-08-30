@@ -46,6 +46,8 @@ class UdPointCloud extends UdSDKClass {
 /// Can just use IntPtr instead
 class udPointCloud extends Struct {}
 
+class udQueryFilter extends Struct {}
+
 class udVoxelID extends Struct {
   @Uint64()
   int index; //!< Internal index value
@@ -54,12 +56,9 @@ class udVoxelID extends Struct {
 
   Pointer<Void> pRenderInfo; //!< Internal render info
 
-  factory udVoxelID.allocate(
-          int index, Pointer<Void> pTrav, Pointer<void> pRenderInfo) =>
-      allocate<udVoxelID>().ref
-        ..index = index
-        ..pTrav = pTrav
-        ..pRenderInfo = pRenderInfo;
+  factory udVoxelID.allocate() => allocate<udVoxelID>().ref
+    ..pTrav = allocate()
+    ..pRenderInfo = allocate();
 }
 
 /// Stores basic information about a `udPointCloud`
