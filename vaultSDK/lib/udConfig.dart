@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'udSdkLib.dart';
 import 'udError.dart';
 
-class UdConfig {
+class UdConfig extends UdSDKClass {
   // static const MethodChannel _channel = const MethodChannel('udContext');
 
   // static Future<String> get platformVersion async {
@@ -15,12 +15,11 @@ class UdConfig {
 
   // Allows VDK to connect to server with an unrecognized certificate authority, sometimes required for self-signed certificates or poorly configured proxies.
   // Used for workaround where calling UdContext.connect will always return vE_SecurityFailure
-  static udError ignoreCertificateVerification(bool ignore) {
+  static void ignoreCertificateVerification(bool ignore) {
     // Cast boolean to C int where 0 == False and 1 == True
     int ignoreVal = ignore ? 1 : 0;
-    var err = udConfig_IgnoreCertificateVerification(ignoreVal);
-
-    return udError.values[err];
+    UdSDKClass.handleUdErrorStatic(
+        udConfig_IgnoreCertificateVerification(ignoreVal));
   }
 }
 

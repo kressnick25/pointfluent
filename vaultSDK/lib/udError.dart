@@ -40,3 +40,41 @@ enum udError {
 
   udE_Count //!< Internally used to verify return values
 }
+
+/// Return the udError value from corrensponding error code
+udError udErrorValue(int errorNum) {
+  final maxErrorCode = udError.values.length - 1;
+  if (errorNum > maxErrorCode) {
+    // return catch-all value
+    return udError.udE_Failure;
+  }
+  return udError.values[errorNum];
+}
+
+class UdException implements Exception {
+  String _message;
+
+  UdException(udError errorVal) {
+    this._message = _errorMessage(errorVal);
+  }
+
+  String _errorMessage(udError errorVal) {
+    switch (errorVal) {
+      case udError.udE_AuthFailure:
+        return "Invalid credentials, please try again.";
+      case udError.udE_SecurityFailure:
+        return "Security failure, try disabling cert verification.";
+      case udError.udE_ProxyError:
+        return "There was an issue with the provided proxy information.";
+
+      // Handle more errors here
+      default:
+        return "An unknown error has occured. Code $errorVal";
+    }
+  }
+
+  @override
+  String toString() {
+    return _message;
+  }
+}

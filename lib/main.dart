@@ -15,7 +15,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  static Pointer<IntPtr> udContext = allocate();
+  final udContext = UdContext();
 
   // This widget is the root of your application.
   @override
@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
           LoginPage.routeName: (context) => LoginPage(
                 udContext: udContext,
               ),
-          HomePage.routeName: (context) => HomePage(),
+          HomePage.routeName: (context) => HomePage(
+                udContext: udContext,
+              ),
           SettingsPage.routeName: (context) => SettingsPage(),
         });
   }

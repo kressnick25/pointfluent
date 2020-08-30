@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,10 @@ import 'package:vaultSDK/udConfig.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../util/Result.dart';
 import '../util/Constants.dart' as Constants;
 import '../widgets/emptyWidget.dart';
 import '../widgets/KeyboardVisibilityBuilder.dart';
+import '../widgets/ErrorMsg.dart';
 
 class AuthDetails {
   String username;
@@ -23,7 +24,7 @@ class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.udContext}) : super(key: key);
 
   static const routeName = '/';
-  final Pointer<IntPtr> udContext;
+  final UdContext udContext;
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _ignoreCert = false;
   bool _isLoading = false;
-  AuthResult _authResult = AuthResult();
+  String _errMessage;
   AuthDetails user = AuthDetails();
 
   void onSubmit() {
@@ -43,23 +44,24 @@ class _LoginPageState extends State<LoginPage> {
 
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
-    final err =
-        UdContext.connect(widget.udContext, user.username, user.password);
+    try {
+      widget.udContext.connect(user.username, user.password);
+      setState(() {
+        _errMessage = null;
+        _isLoading = false;
+      });
 
-    setState(() {
-      _isLoading = false;
-      _authResult.value = err;
-    });
-
-    if (_authResult.ok) {
       // TODO set global udContext
       // use popAndPush to stop user pressing back to get to login screen
       Navigator.popAndPushNamed(
         context,
         '/home',
       );
-    } else {
-      _authResult.setErrorMessage();
+    } catch (e) {
+      setState(() {
+        _errMessage = e.toString();
+        _isLoading = false;
+      });
     }
   }
 
@@ -150,8 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                     _isLoading ? CircularProgressIndicator() : Text('Submit'),
               ),
             ),
-            Text(_authResult.error ? _authResult.message : '',
-                style: TextStyle(color: Colors.red)),
+            ErrorMsg(message: _errMessage),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(

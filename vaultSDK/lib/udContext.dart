@@ -1,35 +1,48 @@
-import 'dart:async';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
-import 'package:flutter/services.dart';
 
 import 'udSdkLib.dart';
-import 'udError.dart';
 
-class UdContext {
-  static const MethodChannel _channel = const MethodChannel('udContext');
+class UdContext extends UdSDKClass {
+  Pointer<IntPtr> _context;
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+  UdContext() {
+    this._context = allocate();
   }
 
+  get address => this._context;
+
   // Call these functions in flutter widgets
-  static udError connect(Pointer<IntPtr> udContext, email, password,
+  void connect(email, password,
       [url = 'https://udstream.euclideon.com', appName = 'Pointfluent']) {
     final uUrl = Utf8.toUtf8(url);
     final uAppName = Utf8.toUtf8(appName);
     final uEmail = Utf8.toUtf8(email);
     final uPassword = Utf8.toUtf8(password);
-    var err = udContext_Connect(udContext, uUrl, uAppName, uEmail, uPassword);
+    var err =
+        udContext_Connect(this._context, uUrl, uAppName, uEmail, uPassword);
 
     free(uUrl);
     free(uAppName);
     free(uEmail);
     free(uPassword);
 
-    return udError.values[err];
+    handleUdError(err);
+  }
+
+  /// Disconnects and destroys a udContext object that was created using connect
+  ///
+  /// endSession ends the session entirely and cannot be resumed
+  void disconnect({bool endSession = true}) {
+    int endSessionVal = endSession ? 1 : 0;
+    handleUdError(udContext_Disconnect(this._context, endSessionVal));
+
+    this._cleanup();
+  }
+
+  void _cleanup() {
+    free(this._context);
   }
 }
 
@@ -53,3 +66,18 @@ final udContext_ConnectPointer = udSdkLib
 
 final udContext_Connect =
     udContext_ConnectPointer.asFunction<udContext_Connect_dart>();
+
+// udContext_Disconnect
+typedef udContext_Disconnect_native = Int32 Function(
+  Pointer<IntPtr> context,
+  Uint32 endSession,
+);
+typedef udContext_Disconnect_dart = int Function(
+  Pointer<IntPtr> context,
+  int endSession,
+);
+final udContext_DisconnectPointer =
+    udSdkLib.lookup<NativeFunction<udContext_Disconnect_native>>(
+        'udContext_Disconnect');
+final udContext_Disconnect =
+    udContext_DisconnectPointer.asFunction<udContext_Disconnect_dart>();
