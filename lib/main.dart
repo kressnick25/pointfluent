@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Custom material color data
     Map<int, Color> color = {
       50: Color.fromRGBO(18, 171, 199, .1),
       100: Color.fromRGBO(18, 171, 199, .2),

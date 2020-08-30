@@ -1,3 +1,4 @@
+import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -60,56 +61,18 @@ class _HomePageState extends State<HomePage> {
               trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            color: Color(0xffffffff),
-            child: ListTile(
-              title: Text(
-                'Most Recent',
-                style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
-              ),
-              // leading: Icon(Icons.storage),
+          MenuItem(
+              title: 'Most Recent',
               trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            color: Color(0xffffffff),
-            child: ListTile(
-                title: Text(
-                  'Select File',
-                  style: const TextStyle(
-                    fontSize: 22,
-                  ),
-                ),
-                leading: Icon(Icons.folder),
-                trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () => _handleFileSelect()),
-          ),
-          Card(
-            child: ListTile(
-              title: Text(
-                'Settings',
-                style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
-              ),
-              // leading: Icon(Icons.settings),
+              onTap: () => _handleFileSelect()),
+          MenuItem(
+              title: 'Settings',
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.pushNamed(context, '/settings'),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            color: Color(0xffffffff),
-            child: ListTile(
-              title: Text(
-                'Logout',
-                style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
-              ),
-              // leading: Icon(Icons.eject),
+              onTap: () => Navigator.pushNamed(context, '/settings')),
+          MenuItem(
+              title: 'Logout',
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.popAndPushNamed(context, '/'),
-            ),
-          ),
+              onTap: () => Navigator.popAndPushNamed(context, '/')),
           ErrorMsg(message: _errMessage),
         ],
       ),
