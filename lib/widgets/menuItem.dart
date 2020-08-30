@@ -18,7 +18,7 @@ class MenuItem extends StatelessWidget {
           style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
         ),
         trailing: this.trailing,
-        onTap: onTap,
+        onTap: this.onTap,
       ),
     );
   }
