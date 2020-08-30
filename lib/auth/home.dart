@@ -40,24 +40,41 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff8f8f8),
       appBar: AppBar(
-        title: const Text('Home'),
+        toolbarHeight: 80,
+        elevation: 0,
+        title:
+            Text('Home', style: TextStyle(color: Colors.white, fontSize: 26)),
       ),
       body: ListView(
         children: <Widget>[
-          Card(
+          Container(
+            color: Color.fromRGBO(24, 189, 210, 1.0),
+            child: ListTile(
+              title: Text(
+                'Enter Scene Viewer',
+                style: const TextStyle(
+                    color: Colors.white, fontSize: 18, letterSpacing: -0.3),
+              ),
+              trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            color: Color(0xffffffff),
             child: ListTile(
               title: Text(
                 'Most Recent',
-                style: const TextStyle(
-                  fontSize: 22,
-                ),
+                style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
               ),
-              leading: Icon(Icons.storage),
+              // leading: Icon(Icons.storage),
               trailing: Icon(Icons.keyboard_arrow_right),
             ),
           ),
-          Card(
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            color: Color(0xffffffff),
             child: ListTile(
                 title: Text(
                   'Select File',
@@ -73,24 +90,22 @@ class _HomePageState extends State<HomePage> {
             child: ListTile(
               title: Text(
                 'Settings',
-                style: const TextStyle(
-                  fontSize: 22,
-                ),
+                style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
               ),
-              leading: Icon(Icons.settings),
+              // leading: Icon(Icons.settings),
               trailing: Icon(Icons.keyboard_arrow_right),
               onTap: () => Navigator.pushNamed(context, '/settings'),
             ),
           ),
-          Card(
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            color: Color(0xffffffff),
             child: ListTile(
               title: Text(
                 'Logout',
-                style: const TextStyle(
-                  fontSize: 22,
-                ),
+                style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
               ),
-              leading: Icon(Icons.eject),
+              // leading: Icon(Icons.eject),
               trailing: Icon(Icons.keyboard_arrow_right),
               onTap: () => Navigator.popAndPushNamed(context, '/'),
             ),
