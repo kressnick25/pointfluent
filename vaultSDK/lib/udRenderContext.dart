@@ -5,11 +5,12 @@ import 'package:ffi/ffi.dart';
 import 'package:vaultSDK/udContext.dart';
 import 'package:vaultSDK/udPointCloud.dart';
 import 'package:vaultSDK/udSdkLib.dart';
+import 'package:vaultSDK/udRenderTarget.dart';
 
 import './util/ArrayHelper.dart';
 
 class UdRenderContext extends UdSDKClass {
-  Pointer<IntPtr> _renderContext;
+  Pointer<udRenderContext> _renderContext;
   udRenderInstance renderInstance;
   udRenderSettings renderSettings;
   udRenderPicking renderPicking;
@@ -37,12 +38,8 @@ class UdRenderContext extends UdSDKClass {
 
   /// Render the models from the persepective of `pRenderView`
   void render(UdRenderTarget renderTarget, int modelCount) {
-    handleUdError(_udRenderContext_Render(
-        _renderContext,
-        renderTarget.addressOf,
-        renderInstance.addressOf,
-        modelCount,
-        renderSettings.addressOf));
+    handleUdError(_udRenderContext_Render(_renderContext, renderTarget.address,
+        renderInstance.addressOf, modelCount, renderSettings.addressOf));
   }
 
   void cleanup() {
@@ -51,6 +48,8 @@ class UdRenderContext extends UdSDKClass {
     free(renderSettings.addressOf);
   }
 }
+
+class udRenderContext extends Struct {}
 
 /// These are various point modes available in udSDK
 enum udRenderContextPointMode {
@@ -220,13 +219,13 @@ final _udRenderContext_Destroy =
 // udRenderContext_Render
 // C declaration: udError udRenderContext_Render(struct udRenderContext *pRenderer, struct udRenderTarget *pRenderView, struct udRenderInstance *pModels, int modelCount, struct udRenderSettings *pRenderOptions);
 typedef _udRenderContext_Render_native = Int32 Function(
-    Pointer<IntPtr>,
+    Pointer<udRenderContext>,
     Pointer<udRenderTarget>,
     Pointer<udRenderInstance>,
     int,
     Pointer<udRenderSettings>);
 typedef _udRenderContext_Render_dart = int Function(
-    Pointer<IntPtr>,
+    Pointer<udRenderContext>,
     Pointer<udRenderTarget>,
     Pointer<udRenderInstance>,
     int,
