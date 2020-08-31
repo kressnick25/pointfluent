@@ -1,3 +1,4 @@
+import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -40,61 +41,38 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff8f8f8),
       appBar: AppBar(
-        title: const Text('Home'),
+        toolbarHeight: 80,
+        elevation: 0,
+        title:
+            Text('Home', style: TextStyle(color: Colors.white, fontSize: 26)),
       ),
       body: ListView(
         children: <Widget>[
-          Card(
+          Container(
+            color: Color.fromRGBO(24, 189, 210, 1.0),
             child: ListTile(
               title: Text(
-                'Most Recent',
+                'Enter Scene Viewer',
                 style: const TextStyle(
-                  fontSize: 22,
-                ),
+                    color: Colors.white, fontSize: 18, letterSpacing: -0.3),
               ),
-              leading: Icon(Icons.storage),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
             ),
           ),
-          Card(
-            child: ListTile(
-                title: Text(
-                  'Select File',
-                  style: const TextStyle(
-                    fontSize: 22,
-                  ),
-                ),
-                leading: Icon(Icons.folder),
-                trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () => _handleFileSelect()),
-          ),
-          Card(
-            child: ListTile(
-              title: Text(
-                'Settings',
-                style: const TextStyle(
-                  fontSize: 22,
-                ),
-              ),
-              leading: Icon(Icons.settings),
+          MenuItem(
+              title: 'Most Recent',
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.pushNamed(context, '/settings'),
-            ),
-          ),
-          Card(
-            child: ListTile(
-              title: Text(
-                'Logout',
-                style: const TextStyle(
-                  fontSize: 22,
-                ),
-              ),
-              leading: Icon(Icons.eject),
+              onTap: () => _handleFileSelect()),
+          MenuItem(
+              title: 'Settings',
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.popAndPushNamed(context, '/'),
-            ),
-          ),
+              onTap: () => Navigator.pushNamed(context, '/settings')),
+          MenuItem(
+              title: 'Logout',
+              trailing: Icon(Icons.keyboard_arrow_right),
+              onTap: () => Navigator.popAndPushNamed(context, '/')),
           ErrorMsg(message: _errMessage),
         ],
       ),
