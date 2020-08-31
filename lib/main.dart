@@ -10,7 +10,7 @@ import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
@@ -22,9 +22,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
+        //Set to true to display the debug banner in build mode
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.cyan,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          backgroundColor: Colors.white,
+          fontFamily: 'Roboto',
         ),
         initialRoute: '/',
         routes: {
