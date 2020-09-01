@@ -15,6 +15,8 @@ class UdPointCloud extends UdSDKClass {
     this.header = udPointCloudHeader.allocate();
   }
 
+  get address => _pointCloud;
+
   void load(UdContext udContext, String modelLocation) {
     final pModelLocation = Utf8.toUtf8(modelLocation);
     final err = _udPointCloud_Load(udContext.address, this._pointCloud,

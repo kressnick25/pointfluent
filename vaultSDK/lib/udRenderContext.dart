@@ -10,7 +10,7 @@ import 'package:vaultSDK/udRenderTarget.dart';
 import './util/ArrayHelper.dart';
 
 class UdRenderContext extends UdSDKClass {
-  Pointer<udRenderContext> _renderContext;
+  Pointer<IntPtr> _renderContext;
   udRenderInstance renderInstance;
   udRenderSettings renderSettings;
   udRenderPicking renderPicking;
@@ -20,6 +20,7 @@ class UdRenderContext extends UdSDKClass {
     // These are allocated for nested structs
     this.renderInstance = udRenderInstance.allocate();
     this.renderPicking = udRenderPicking.allocate();
+    this.renderSettings = udRenderSettings.allocate();
   }
 
   Pointer get address => _renderContext;
@@ -38,8 +39,12 @@ class UdRenderContext extends UdSDKClass {
 
   /// Render the models from the persepective of `pRenderView`
   void render(UdRenderTarget renderTarget, int modelCount) {
-    handleUdError(_udRenderContext_Render(_renderContext, renderTarget.address,
-        renderInstance.addressOf, modelCount, renderSettings.addressOf));
+    handleUdError(_udRenderContext_Render(
+        _renderContext,
+        renderTarget.address,
+        renderInstance.addressOf.cast<IntPtr>(),
+        modelCount,
+        renderSettings.addressOf.cast<IntPtr>()));
   }
 
   void cleanup() {
@@ -125,6 +130,22 @@ class udRenderSettings extends Struct {
 
   //!< Optional This filter is applied to all models in the scene
   Pointer<udQueryFilter> pFilter;
+
+  factory udRenderSettings.allocate() => allocate<udRenderSettings>().ref
+    ..pPick = allocate()
+    ..pFilter = allocate();
+}
+
+// Int32 voxelShader(Pointer<IntPtr> pPointcloud, Pointer<IntPtr> pVoxelID,
+//     Pointer<Void> pVoxelUserData) {
+//   return 0;
+// }
+
+typedef voxelShaderType = Int32 Function(
+    Pointer<IntPtr>, Pointer<IntPtr>, Pointer<Void>);
+int voxelShader(Pointer<IntPtr> pPointCloud, Pointer<IntPtr> pVoxelID,
+    Pointer<Void> pVoxelUserData) {
+  return 0;
 }
 
 class udRenderInstance extends Struct {
@@ -140,7 +161,7 @@ class udRenderInstance extends Struct {
 
   //!< When the renderer goes to select a colour, it calls this function instead
   // uint32_t (*pVoxelShader)(struct udPointCloud *pPointCloud, const struct udVoxelID *pVoxelID, const void *pVoxelUserData);
-  // TODO
+  Pointer<NativeFunction> pVoxelShader;
 
   //!< If pVoxelShader is set, this parameter is passed to that function
   Pointer<Void> pVoxelUserData;
@@ -153,9 +174,42 @@ class udRenderInstance extends Struct {
     }
   }
 
-  factory udRenderInstance.allocate() =>
-      allocate<udRenderInstance>().ref..matrix = allocate(count: 16);
+  factory udRenderInstance.allocate() => allocate<udRenderInstance>().ref
+    ..matrix = allocate(count: 16)
+    ..pVoxelShader = Pointer.fromFunction<voxelShaderType>(voxelShader, 0);
 }
+
+// uint32_t vcVoxelShader_Colour(udPointCloud *pPointCloud, const udVoxelID *pVoxelID, const void *pUserData)
+// {
+//   vcUDRSData *pData = (vcUDRSData *)pUserData;
+
+//   uint64_t color64 = 0;
+//   udPointCloud_GetNodeColour64(pPointCloud, pVoxelID, &color64);
+//   uint32_t result;
+//   uint32_t encNormal = (uint32_t)(color64 >> 32);
+//   if (encNormal)
+//   {
+//     udFloat3 normal;
+//     normal.x = int16_t(encNormal >> 16) / 32767.f;
+//     normal.y = int16_t(encNormal & 0xfffe) / 32767.f;
+//     normal.z = 1.f - (normal.x * normal.x + normal.y * normal.y);
+//     if (normal.z > 0.001)
+//       normal.z = udSqrt(normal.z);
+//     if (encNormal & 1)
+//       normal.z = -normal.z;
+
+//     float dot = (udDot(g_globalSunDirection, normal) * 0.5f) + 0.5f;
+//     result = (uint8_t(((color64 >> 16) & 0xff) * dot) << 16)
+//            | (uint8_t(((color64 >> 8) & 0xff) * dot) << 8)
+//            | (uint8_t(((color64 >> 0) & 0xff) * dot) << 0);
+//   }
+//   else
+//   {
+//     result = (uint32_t)color64 & 0xffffff;
+//   }
+
+//   return vcPCShaders_BuildAlpha(pData->pModel) | result;
+// }
 
 /// Helper for array `baseOffset` in struct `udPointCloudHeader`.
 class _ArrayHelper_udRenderContext_pointCenter extends ArrayHelper {
@@ -219,19 +273,17 @@ final _udRenderContext_Destroy =
 // udRenderContext_Render
 // C declaration: udError udRenderContext_Render(struct udRenderContext *pRenderer, struct udRenderTarget *pRenderView, struct udRenderInstance *pModels, int modelCount, struct udRenderSettings *pRenderOptions);
 typedef _udRenderContext_Render_native = Int32 Function(
-    Pointer<udRenderContext>,
-    Pointer<udRenderTarget>,
-    Pointer<udRenderInstance>,
-    int,
-    Pointer<udRenderSettings>);
+    Pointer<IntPtr>, Pointer<IntPtr>, Pointer<IntPtr>, Int32, Pointer<IntPtr>);
 typedef _udRenderContext_Render_dart = int Function(
-    Pointer<udRenderContext>,
-    Pointer<udRenderTarget>,
-    Pointer<udRenderInstance>,
-    int,
-    Pointer<udRenderSettings>);
+    Pointer<IntPtr>, Pointer<IntPtr>, Pointer<IntPtr>, int, Pointer<IntPtr>);
 final _udRenderContext_RenderPointer =
     udSdkLib.lookup<NativeFunction<_udRenderContext_Render_native>>(
         'udRenderContext_Render');
 final _udRenderContext_Render =
     _udRenderContext_RenderPointer.asFunction<_udRenderContext_Render_dart>();
+
+typedef voxelShader_native = Int32 Function(Pointer, Pointer, Pointer<Void>);
+typedef voxelShader_dart = int Function(Pointer, Pointer, Pointer<Void>);
+
+final voxelShader_Pointer =
+    udSdkLib.lookup<NativeFunction<voxelShader_native>>('pVoxelShader');
