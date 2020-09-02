@@ -19,8 +19,8 @@ import 'auth/settings.dart';
 List<double> cameraMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -75, 5, 1];
 
 void main() {
-  final width = 1280;
-  final height = 720;
+  final width = 640;
+  final height = 480;
   final username = "kressnick25@gmail.com";
   final password = "Gizzhead12";
   final modelName = "https://models.euclideon.com/DirCube.uds";
@@ -44,14 +44,16 @@ void main() {
 
   renderContext.renderInstance.setMatrix(cameraMatrix);
 
+  // Sometimes this throws udE_InvalidParameter, sometimes segfaults, sometimes is fine
   renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, cameraMatrix);
   renderContext.renderSettings.flags =
       udRenderContextFlags.udRCF_BlockingStreaming;
 
   try {
+    // This segfaults most times, sometimes returns udE_SessionExpired
     renderContext.render(renderTarget, 1);
   } catch (e) {
-    log(e);
+    log(e.toString());
   }
 
   runApp(MyApp());
