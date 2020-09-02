@@ -39,9 +39,11 @@ class _LoginPageState extends State<LoginPage> {
   bool _ignoreCert = false;
   bool _isLoading = false;
   bool _rememberMe = false;
-  String _intialEmail;
+
   AuthDetails user = AuthDetails();
   ErrorMsg _error = ErrorMsg();
+
+  TextEditingController _emailController = TextEditingController();
 
   @override
   initState() {
@@ -54,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
     userPrefs = await SharedPreferences.getInstance();
     setState(() {
       _rememberMe = (userPrefs.getBool('rememberme') ?? false);
-      _intialEmail = (userPrefs.getString('email') ?? '');
+      _emailController.text = (userPrefs.getString('email') ?? '');
     });
   }
 
@@ -65,16 +67,13 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  _updateRememberMe(bool value) {
+  _updateRememberMe(bool value) async {
     setState(() {
       _rememberMe = !_rememberMe;
     });
 
+    SharedPreferences userPrefs = await SharedPreferences.getInstance();
     userPrefs.setBool('rememberme', value);
-
-    if (!_rememberMe) {
-      userPrefs.remove('email');
-    }
   }
 
   _launchRegisterURL() async {
@@ -108,6 +107,12 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isLoading = true;
     });
+
+    if (!_rememberMe) {
+      userPrefs.remove('email');
+    } else {
+      userPrefs.setString('email', _emailController.text);
+    }
 
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
@@ -178,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 15, right: 15, top: 5),
                   child: TextFormField(
-                    initialValue: _intialEmail,
+                    controller: _emailController,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Email',
@@ -186,11 +191,8 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (value) {
                       return value.isEmpty ? 'Please enter your email.' : null;
                     },
-                    onSaved: (String value) {
+                    onSaved: (String value) async {
                       user.username = value;
-                      if (_rememberMe) {
-                        userPrefs.setString('email', value);
-                      }
                     },
                   ),
                 ),
@@ -216,7 +218,7 @@ class _LoginPageState extends State<LoginPage> {
                           ? 'Please enter your password.'
                           : null;
                     },
-                    onSaved: (String value) {
+                    onSaved: (String value) async {
                       user.password = value;
                     },
                   ),
