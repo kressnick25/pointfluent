@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class ErrorMsg {
-  final String message;
+  String message;
   ErrorMsg({this.message});
 
-  Future<void> showAlertDialog(
-      String errorMessage, BuildContext context) async {
+  Future<void> showAlertDialog(BuildContext context) async {
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Error'),
-            content: Text(errorMessage),
+            content: Text(this.message),
             actions: <Widget>[
               FlatButton(
                 child: Text("Close"),

@@ -39,10 +39,9 @@ class _LoginPageState extends State<LoginPage> {
   bool _ignoreCert = false;
   bool _isLoading = false;
   bool _rememberMe = false;
-  String _errMessage;
   String _intialEmail;
   AuthDetails user = AuthDetails();
-  ErrorMsg error;
+  ErrorMsg _error = ErrorMsg();
 
   @override
   initState() {
@@ -110,30 +109,12 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
 
-    Future<void> _showAlertDialog(String errorMessage) async {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Error'),
-              content: Text(errorMessage),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Close"),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              ],
-            );
-          });
-    }
-
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
     try {
       widget.udContext.connect(user.username, user.password);
       setState(() {
-        _errMessage = null;
+        _error.message = null;
         _isLoading = false;
       });
 
@@ -143,11 +124,10 @@ class _LoginPageState extends State<LoginPage> {
       );
     } catch (e) {
       setState(() {
-        _errMessage = e.toString();
+        _error.message = e.toString();
         _isLoading = false;
-        // _showAlertDialog(_errMessage);
-        error.showAlertDialog(_errMessage, context);
       });
+      _error.showAlertDialog(context);
     }
   }
 
