@@ -10,16 +10,23 @@ import 'package:vaultSDK/udSdkLib.dart';
 
 import './util/ArrayHelper.dart';
 
+const int _cameraMatrixLength = 16;
+
 class UdRenderTarget extends UdSDKClass {
   Pointer<IntPtr> _renderTarget;
   Pointer<Int64> _colorBuffer;
   Pointer<Float> _depthBuffer;
   final int _bufferLength;
+  Map<udRenderTargetMatrix, Pointer<Double>> _matrices;
 
   UdRenderTarget(this._bufferLength) {
     this._renderTarget = allocate();
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
+    _matrices = {}; // init map
+    for (var key in udRenderTargetMatrix.values) {
+      _matrices[key] = allocate(count: _cameraMatrixLength);
+    }
   }
 
   get address => _renderTarget;
@@ -86,21 +93,18 @@ class UdRenderTarget extends UdSDKClass {
 
   // Set the matrix associated with `pRenderTarget` of type `matrixType` and get it from `cameraMatrix`.
   void setMatrix(udRenderTargetMatrix matrixType, List<double> cameraMatrix) {
-    const listLength = 16;
-    Pointer<Double> _cameraMatrix = allocate(count: listLength);
-
     // copy matrix to C typed list
-    for (int i = 0; i < listLength; i++) {
-      _cameraMatrix[i] = cameraMatrix[i];
+    Pointer<Double> matrix = this._matrices[matrixType];
+    for (int i = 0; i < _cameraMatrixLength; i++) {
+      matrix[i] = cameraMatrix[i];
     }
 
     try {
       handleUdError(_udRenderTarget_SetMatrix(
-          _renderTarget, matrixType.index, _cameraMatrix));
+          _renderTarget, matrixType.index, _matrices[matrixType]));
+      this._matrices[matrixType] = matrix;
     } catch (err) {
       throw err;
-    } finally {
-      free(_cameraMatrix);
     }
   }
 
@@ -108,6 +112,9 @@ class UdRenderTarget extends UdSDKClass {
     free(_renderTarget);
     free(_colorBuffer);
     free(_depthBuffer);
+    for (var key in udRenderTargetMatrix.values) {
+      free(_matrices[key]);
+    }
   }
 }
 
