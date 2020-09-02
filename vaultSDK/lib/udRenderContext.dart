@@ -154,7 +154,38 @@ class udRenderInstance extends Struct {
 
   //!< The world space matrix for this point cloud instance (this does not to be the default matrix)
   //!< @note The default matrix for a model can be accessed from the associated udPointCloudHeader
-  Pointer<Double> matrix;
+  @Double()
+  double _matrix_0;
+  @Double()
+  double _matrix_1;
+  @Double()
+  double _matrix_2;
+  @Double()
+  double _matrix_3;
+  @Double()
+  double _matrix_4;
+  @Double()
+  double _matrix_5;
+  @Double()
+  double _matrix_6;
+  @Double()
+  double _matrix_7;
+  @Double()
+  double _matrix_8;
+  @Double()
+  double _matrix_9;
+  @Double()
+  double _matrix_10;
+  @Double()
+  double _matrix_11;
+  @Double()
+  double _matrix_12;
+  @Double()
+  double _matrix_13;
+  @Double()
+  double _matrix_14;
+  @Double()
+  double _matrix_15;
 
   //!< Filter to override for this model, this one will be used instead of the global one applied in udRenderSettings
   Pointer<udQueryFilter> pFilter;
@@ -166,17 +197,123 @@ class udRenderInstance extends Struct {
   //!< If pVoxelShader is set, this parameter is passed to that function
   Pointer<Void> pVoxelUserData;
 
-  List getMatrix() => matrix.asTypedList(16);
-
-  void setMatrix(List values) {
+  get storedMatrix => _ArrayHelper_udRenderInstance_matrix(this, [16], 0, 0);
+  set storedMatrix(List<double> values) {
     for (int i = 0; i < 16; i++) {
-      matrix[i] = values[i];
+      storedMatrix[i] = values[i];
+    }
+  }
+
+  void setMatrix(List<double> values) {
+    for (int i = 0; i < 16; i++) {
+      storedMatrix[i] = values[i];
     }
   }
 
   factory udRenderInstance.allocate() => allocate<udRenderInstance>().ref
-    ..matrix = allocate(count: 16)
     ..pVoxelShader = Pointer.fromFunction<voxelShaderType>(voxelShader, 0);
+}
+
+/// Helper for array `storedMatrix` in struct `udPointCloudHeader`.
+class _ArrayHelper_udRenderInstance_matrix extends ArrayHelper {
+  _ArrayHelper_udRenderInstance_matrix(struct, dimensions, level, absoluteIndex)
+      : super(struct, dimensions, level, absoluteIndex);
+
+  operator [](int index) {
+    checkBounds(index);
+    switch (absoluteIndex + index) {
+      case 0:
+        return struct._matrix_0;
+      case 1:
+        return struct._matrix_1;
+      case 2:
+        return struct._matrix_2;
+      case 3:
+        return struct._matrix_3;
+      case 4:
+        return struct._matrix_4;
+      case 5:
+        return struct._matrix_5;
+      case 6:
+        return struct._matrix_6;
+      case 7:
+        return struct._matrix_7;
+      case 8:
+        return struct._matrix_8;
+      case 9:
+        return struct._matrix_9;
+      case 10:
+        return struct._matrix_10;
+      case 11:
+        return struct._matrix_11;
+      case 12:
+        return struct._matrix_12;
+      case 13:
+        return struct._matrix_13;
+      case 14:
+        return struct._matrix_14;
+      case 15:
+        return struct._matrix_15;
+      default:
+        throw Exception('Invalid Array Helper generated.');
+    }
+  }
+
+  void operator []=(int index, value) {
+    checkBounds(index);
+    switch (absoluteIndex + index) {
+      case 0:
+        struct._matrix_0 = value;
+        break;
+      case 1:
+        struct._matrix_1 = value;
+        break;
+      case 2:
+        struct._matrix_2 = value;
+        break;
+      case 3:
+        struct._matrix_3 = value;
+        break;
+      case 4:
+        struct._matrix_4 = value;
+        break;
+      case 5:
+        struct._matrix_5 = value;
+        break;
+      case 6:
+        struct._matrix_6 = value;
+        break;
+      case 7:
+        struct._matrix_7 = value;
+        break;
+      case 8:
+        struct._matrix_8 = value;
+        break;
+      case 9:
+        struct._matrix_9 = value;
+        break;
+      case 10:
+        struct._matrix_10 = value;
+        break;
+      case 11:
+        struct._matrix_11 = value;
+        break;
+      case 12:
+        struct._matrix_12 = value;
+        break;
+      case 13:
+        struct._matrix_13 = value;
+        break;
+      case 14:
+        struct._matrix_14 = value;
+        break;
+      case 15:
+        struct._matrix_15 = value;
+        break;
+      default:
+        throw Exception('Invalid Array Helper generated.');
+    }
+  }
 }
 
 // uint32_t vcVoxelShader_Colour(udPointCloud *pPointCloud, const udVoxelID *pVoxelID, const void *pUserData)
