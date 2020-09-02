@@ -40,7 +40,9 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _rememberMe = false;
   String _errMessage;
+  String _intialEmail;
   AuthDetails user = AuthDetails();
+  ErrorMsg error;
 
   @override
   initState() {
@@ -53,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
     userPrefs = await SharedPreferences.getInstance();
     setState(() {
       _rememberMe = (userPrefs.getBool('rememberme') ?? false);
+      _intialEmail = (userPrefs.getString('email') ?? '');
     });
   }
 
@@ -107,6 +110,24 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
 
+    Future<void> _showAlertDialog(String errorMessage) async {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text(errorMessage),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Close"),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              ],
+            );
+          });
+    }
+
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
     try {
@@ -116,8 +137,6 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
 
-      // TODO set global udContext
-      // use popAndPush to stop user pressing back to get to login screen
       Navigator.popAndPushNamed(
         context,
         '/home',
@@ -126,6 +145,8 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _errMessage = e.toString();
         _isLoading = false;
+        // _showAlertDialog(_errMessage);
+        error.showAlertDialog(_errMessage, context);
       });
     }
   }
@@ -177,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 15, right: 15, top: 5),
                   child: TextFormField(
-                    initialValue: userPrefs.get('email'),
+                    initialValue: _intialEmail,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Email',
@@ -275,7 +296,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            ErrorMsg(message: _errMessage).,
             Padding(
               padding: const EdgeInsets.symmetric(),
               child: ButtonTheme(

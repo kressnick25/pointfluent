@@ -10,7 +10,7 @@ import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
 
-void main() async {
+void main() {
   runApp(MyApp());
 }
 

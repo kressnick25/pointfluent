@@ -42,8 +42,8 @@ class AuthResult extends Result<udError> {
 
       case udError.udE_SecurityFailure:
         {
-          // TODO alert screen with option to change setting
-          this.message = "Security failure, try disabling cert verification.";
+          this.message =
+              "Security failure, please try ignoring the certificate security.";
         }
         break;
 

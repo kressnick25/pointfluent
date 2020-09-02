@@ -8,7 +8,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Pointfluent"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/pf_logo_500x500">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

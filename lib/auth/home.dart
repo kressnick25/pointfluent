@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () => Navigator.popAndPushNamed(context, '/'),
             ),
           ),
-          ErrorMsg(message: _errMessage),
+          // ErrorMsg(message: _errMessage),
         ],
       ),
     );

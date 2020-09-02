@@ -63,7 +63,7 @@ class UdException implements Exception {
       case udError.udE_AuthFailure:
         return "Invalid credentials, please try again.";
       case udError.udE_SecurityFailure:
-        return "Security failure, try disabling cert verification.";
+        return "Security failure, please try ignoring the certificate security.";
       case udError.udE_ProxyError:
         return "There was an issue with the provided proxy information.";
 
