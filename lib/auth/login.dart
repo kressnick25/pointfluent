@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaultSDK/udContext.dart';
@@ -35,11 +36,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  SharedPreferences userPrefs;
+
   bool _ignoreCert = false;
   bool _isLoading = false;
   bool _rememberMe = false;
 
+  SharedPreferences userPrefs;
   AuthDetails user = AuthDetails();
   ErrorMsg _error = ErrorMsg();
 
@@ -102,7 +104,11 @@ class _LoginPageState extends State<LoginPage> {
     userPrefs.setBool('certval', value);
   }
 
-  Future<void> onSubmit() async {
+  Future<void> connect(String username, String password) async {
+    widget.udContext.connect(username, password);
+  }
+
+  onSubmit() async {
     _formKey.currentState.save();
     setState(() {
       _isLoading = true;
@@ -117,11 +123,11 @@ class _LoginPageState extends State<LoginPage> {
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
     try {
-      widget.udContext.connect(user.username, user.password);
-      setState(() {
-        _error.message = null;
-        _isLoading = false;
-      });
+      // widget.udContext.connect(user.username, user.password);
+      await connect(user.username, user.password).then((value) => setState(() {
+            _error.message = null;
+            _isLoading = false;
+          }));
 
       Navigator.popAndPushNamed(
         context,
@@ -270,7 +276,9 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   },
                   child: _isLoading
-                      ? CircularProgressIndicator()
+                      ? CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        )
                       : Text(
                           'Login',
                           style: TextStyle(fontSize: 20),
