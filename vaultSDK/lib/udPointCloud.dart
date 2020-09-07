@@ -13,9 +13,21 @@ class UdPointCloud extends UdSDKClass {
   UdPointCloud() {
     this._pointCloud = allocate();
     this.header = udPointCloudHeader.allocate();
+
+    assert(_pointCloud.cast() != nullptr);
+    assert(header.attributes.cast() != nullptr);
+    assert(header.scaledRange != null);
+    assert(header.convertedResolution != null);
+    assert(header.totalLODLayers != null);
+    assert(header.unitMeterScale != null);
+    assert(header.storedMatrix != null);
+    assert(header.baseOffset != null);
+    assert(header.boundingBoxCenter != null);
+    assert(header.boundingBoxExtents != null);
+    assert(header.pivot != null);
   }
 
-  get address => _pointCloud;
+  Pointer<IntPtr> get address => _pointCloud;
 
   void load(UdContext udContext, String modelLocation) {
     final pModelLocation = Utf8.toUtf8(modelLocation);

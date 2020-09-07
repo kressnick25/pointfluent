@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
+import 'package:flutter/material.dart';
 
 import 'package:vaultSDK/udContext.dart';
 import 'package:vaultSDK/udPointCloud.dart';
@@ -27,9 +28,20 @@ class UdRenderTarget extends UdSDKClass {
     for (var key in udRenderTargetMatrix.values) {
       _matrices[key] = allocate(count: _cameraMatrixLength);
     }
+
+    assert(_renderTarget != nullptr);
+    assert(_colorBuffer != nullptr);
+    assert(_colorBuffer[0] != null);
+    assert(_colorBuffer[_bufferLength] != null);
+    assert(_depthBuffer != nullptr);
+    assert(_depthBuffer[0] != null);
+    assert(_depthBuffer[_bufferLength] != null);
+    for (var key in udRenderTargetMatrix.values) {
+      assert(_matrices[key] != nullptr);
+    }
   }
 
-  get address => _renderTarget;
+  Pointer<IntPtr> get address => _renderTarget;
 
   get colorBuffer => _colorBuffer.asTypedList(_bufferLength);
 
@@ -98,11 +110,12 @@ class UdRenderTarget extends UdSDKClass {
     for (int i = 0; i < _cameraMatrixLength; i++) {
       matrix[i] = cameraMatrix[i];
     }
-
+    assert(_renderTarget != nullptr);
     try {
       handleUdError(_udRenderTarget_SetMatrix(
-          _renderTarget, matrixType.index, _matrices[matrixType]));
+          _renderTarget.address, matrixType.index, _matrices[matrixType]));
       this._matrices[matrixType] = matrix;
+      assert(this._matrices[matrixType] == matrix);
     } catch (err) {
       throw err;
     }
@@ -193,9 +206,9 @@ final _udRenderTarget_GetMatrix = _udRenderTarget_GetMatrixPointer
 // udRenderTarget_SetMatrix
 // C declaration: udError udRenderTarget_SetMatrix(struct udRenderTarget *pRenderTarget, enum udRenderTargetMatrix matrixType, const double cameraMatrix[16]);
 typedef _udRenderTarget_SetMatrix_native = Int32 Function(
-    Pointer<IntPtr>, Int32, Pointer<Double>);
+    Int32, Int32, Pointer<Double>);
 typedef _udRenderTarget_SetMatrix_dart = int Function(
-    Pointer<IntPtr>, int, Pointer<Double>);
+    int, int, Pointer<Double>);
 final _udRenderTarget_SetMatrixPointer =
     udSdkLib.lookup<NativeFunction<_udRenderTarget_SetMatrix_native>>(
         'udRenderTarget_SetMatrix');

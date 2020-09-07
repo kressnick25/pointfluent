@@ -21,9 +21,32 @@ class UdRenderContext extends UdSDKClass {
     this.renderInstance = udRenderInstance.allocate();
     this.renderPicking = udRenderPicking.allocate();
     this.renderSettings = udRenderSettings.allocate();
+
+    assert(renderInstance.pPointCloud != nullptr);
+    assert(renderInstance.pFilter != nullptr);
+    assert(renderInstance.pVoxelShader != nullptr);
+    assert(renderInstance.pVoxelUserData != nullptr);
+    assert(renderInstance.storedMatrix != nullptr);
+    assert(renderInstance.storedMatrix[0] != null);
+    assert(renderInstance.storedMatrix[15] != null);
+
+    assert(renderSettings.flags != null);
+    assert(renderSettings.pPick != nullptr);
+    assert(renderSettings.pointMode != null);
+    assert(renderSettings.pFilter != nullptr);
+
+    assert(renderPicking.x != null);
+    assert(renderPicking.y != null);
+    assert(renderPicking.hit != null);
+    assert(renderPicking.isHighestLOD != null);
+    assert(renderPicking.modelIndex != null);
+    assert(renderPicking.voxelID != nullptr);
+    assert(renderPicking.pointCenter != nullptr);
+    assert(renderPicking.pointCenter[0] != null);
+    assert(renderPicking.pointCenter[2] != null);
   }
 
-  Pointer get address => _renderContext;
+  Pointer<IntPtr> get address => _renderContext;
 
   /// Create an instance of `udRenderContext` for rendering
   void create(UdContext udContext) {
@@ -195,7 +218,8 @@ class udRenderInstance extends Struct {
   Pointer<NativeFunction> pVoxelShader;
 
   //!< If pVoxelShader is set, this parameter is passed to that function
-  Pointer<Void> pVoxelUserData;
+  // Pointer<Void> pVoxelUserData;
+  Pointer<IntPtr> pVoxelUserData;
 
   get storedMatrix => _ArrayHelper_udRenderInstance_matrix(this, [16], 0, 0);
   set storedMatrix(List<double> values) {
@@ -211,7 +235,10 @@ class udRenderInstance extends Struct {
   }
 
   factory udRenderInstance.allocate() => allocate<udRenderInstance>().ref
-    ..pVoxelShader = Pointer.fromFunction<voxelShaderType>(voxelShader, 0);
+    ..pVoxelShader = Pointer.fromFunction<voxelShaderType>(voxelShader, 0)
+    ..pPointCloud = allocate()
+    ..pFilter = allocate()
+    ..pVoxelUserData = allocate();
 }
 
 /// Helper for array `storedMatrix` in struct `udPointCloudHeader`.

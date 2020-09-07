@@ -16,7 +16,24 @@ import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
 
-List<double> cameraMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -75, 5, 1];
+const List<double> cameraMatrix = [
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  5,
+  -75,
+  5,
+  1
+];
 
 void main() {
   final width = 640;
@@ -40,7 +57,6 @@ void main() {
   pointCloud.load(udContext, modelName);
   renderContext.renderInstance.pPointCloud =
       pointCloud.address.cast<udPointCloud>();
-  ;
 
   renderContext.renderInstance.setMatrix(cameraMatrix);
 
