@@ -10,6 +10,10 @@ class SettingsPage extends StatelessWidget {
       // backgroundColor: Theme.of(context).backgroundColor,
       backgroundColor: Color(0xfff8f8f8),
       appBar: AppBar(
+        leading:IconButton(
+          icon: Icon(Icons.keyboard_arrow_left, color: Colors.white, size: 30),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         toolbarHeight: 80,
         elevation: 0,
         title:
