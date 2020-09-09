@@ -18,17 +18,11 @@ class UdRenderTarget extends UdSDKClass {
   Pointer<Int64> _colorBuffer;
   Pointer<Float> _depthBuffer;
   final int _bufferLength;
-  // interan
-  Map<udRenderTargetMatrix, Pointer<Double>> _matrices;
 
   UdRenderTarget(this._bufferLength) {
     this._renderTarget = allocate();
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
-    _matrices = {}; // init map
-    for (var key in udRenderTargetMatrix.values) {
-      _matrices[key] = allocate(count: _cameraMatrixLength);
-    }
 
     assert(_renderTarget != nullptr);
     assert(_colorBuffer != nullptr);
@@ -37,9 +31,6 @@ class UdRenderTarget extends UdSDKClass {
     assert(_depthBuffer != nullptr);
     assert(_depthBuffer[0] != null);
     assert(_depthBuffer[_bufferLength] != null);
-    for (var key in udRenderTargetMatrix.values) {
-      assert(_matrices[key] != nullptr);
-    }
   }
 
   Pointer<IntPtr> get address => _renderTarget;
@@ -107,18 +98,18 @@ class UdRenderTarget extends UdSDKClass {
   // Set the matrix associated with `pRenderTarget` of type `matrixType` and get it from `cameraMatrix`.
   void setMatrix(udRenderTargetMatrix matrixType, List<double> cameraMatrix) {
     // copy matrix to C typed list
-    Pointer<Double> matrix = this._matrices[matrixType];
+    Pointer<Double> matrix = allocate(count: 16);
     for (int i = 0; i < _cameraMatrixLength; i++) {
       matrix[i] = cameraMatrix[i];
     }
     assert(_renderTarget != nullptr);
     try {
       handleUdError(_udRenderTarget_SetMatrix(
-          _renderTarget[0], matrixType.index, _matrices[matrixType]));
-      this._matrices[matrixType] = matrix;
-      assert(this._matrices[matrixType] == matrix);
+          _renderTarget[0], matrixType.index, matrix));
     } catch (err) {
       throw err;
+    } finally {
+      free(matrix);
     }
   }
 
@@ -126,9 +117,6 @@ class UdRenderTarget extends UdSDKClass {
     free(_renderTarget);
     free(_colorBuffer);
     free(_depthBuffer);
-    for (var key in udRenderTargetMatrix.values) {
-      free(_matrices[key]);
-    }
   }
 }
 
