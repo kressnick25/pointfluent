@@ -4,13 +4,14 @@ class MenuItem extends StatelessWidget {
   final String title;
   final Widget trailing;
   final GestureTapCallback onTap;
+  final EdgeInsetsGeometry margin;
 
-  MenuItem({this.title, this.trailing, this.onTap});
+  MenuItem({this.title, this.trailing, this.onTap, this.margin});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 12),
+      margin: this.margin,
       color: Colors.white,
       child: ListTile(
         title: Text(
