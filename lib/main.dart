@@ -60,7 +60,6 @@ void main() {
 
   renderContext.renderInstance.setMatrix(cameraMatrix);
 
-  // Sometimes this throws udE_InvalidParameter, sometimes segfaults, sometimes is fine
   renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, cameraMatrix);
   renderContext.renderSettings.flags =
       udRenderContextFlags.udRCF_BlockingStreaming;

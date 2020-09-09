@@ -51,7 +51,7 @@ class UdRenderContext extends UdSDKClass {
   /// Create an instance of `udRenderContext` for rendering
   void create(UdContext udContext) {
     handleUdError(_udRenderContext_Create(
-        udContext.address, Pointer.fromAddress(_renderContext.address)));
+        udContext.address[0], Pointer.fromAddress(_renderContext.address)));
   }
 
   /// Destroy the instance of the renderer
@@ -63,11 +63,11 @@ class UdRenderContext extends UdSDKClass {
   /// Render the models from the persepective of `pRenderView`
   void render(UdRenderTarget renderTarget, int modelCount) {
     handleUdError(_udRenderContext_Render(
-        _renderContext,
-        renderTarget.address,
-        renderInstance.addressOf.cast<IntPtr>(),
+        _renderContext[0],
+        renderTarget.address[0],
+        renderInstance.addressOf.cast<IntPtr>()[0],
         modelCount,
-        renderSettings.addressOf.cast<IntPtr>()));
+        renderSettings.addressOf.cast<IntPtr>()[0]));
   }
 
   void cleanup() {
@@ -416,8 +416,8 @@ class _ArrayHelper_udRenderContext_pointCenter extends ArrayHelper {
 // udRenderContext_Create
 // C declaration: udError udRenderContext_Create(struct udContext *pContext, struct udRenderContext **ppRenderer)
 typedef _udRenderContext_Create_native = Int32 Function(
-    Pointer, Pointer<IntPtr>);
-typedef _udRenderContext_Create_dart = int Function(Pointer, Pointer<IntPtr>);
+    IntPtr, Pointer<IntPtr>);
+typedef _udRenderContext_Create_dart = int Function(int, Pointer<IntPtr>);
 final _udRenderContext_CreatePointer =
     udSdkLib.lookup<NativeFunction<_udRenderContext_Create_native>>(
         'udRenderContext_Create');
@@ -437,9 +437,8 @@ final _udRenderContext_Destroy =
 // udRenderContext_Render
 // C declaration: udError udRenderContext_Render(struct udRenderContext *pRenderer, struct udRenderTarget *pRenderView, struct udRenderInstance *pModels, int modelCount, struct udRenderSettings *pRenderOptions);
 typedef _udRenderContext_Render_native = Int32 Function(
-    Pointer<IntPtr>, Pointer<IntPtr>, Pointer<IntPtr>, Int32, Pointer<IntPtr>);
-typedef _udRenderContext_Render_dart = int Function(
-    Pointer<IntPtr>, Pointer<IntPtr>, Pointer<IntPtr>, int, Pointer<IntPtr>);
+    IntPtr, IntPtr, IntPtr, Int32, IntPtr);
+typedef _udRenderContext_Render_dart = int Function(int, int, int, int, int);
 final _udRenderContext_RenderPointer =
     udSdkLib.lookup<NativeFunction<_udRenderContext_Render_native>>(
         'udRenderContext_Render');

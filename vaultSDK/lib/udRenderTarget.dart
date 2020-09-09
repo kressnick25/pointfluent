@@ -18,6 +18,7 @@ class UdRenderTarget extends UdSDKClass {
   Pointer<Int64> _colorBuffer;
   Pointer<Float> _depthBuffer;
   final int _bufferLength;
+  // interan
   Map<udRenderTargetMatrix, Pointer<Double>> _matrices;
 
   UdRenderTarget(this._bufferLength) {
@@ -53,9 +54,9 @@ class UdRenderTarget extends UdSDKClass {
     final ppRenderTarget =
         Pointer.fromAddress(_renderTarget.address).cast<IntPtr>();
     handleUdError(_udRenderTarget_Create(
-      udContext.address,
+      udContext.address[0],
       ppRenderTarget,
-      renderContext.address,
+      renderContext.address[0],
       width,
       height,
     ));
@@ -72,7 +73,7 @@ class UdRenderTarget extends UdSDKClass {
     final pColorBuffer = _colorBuffer.cast<Void>();
     final pDepthBuffer = _depthBuffer.cast<Void>();
     handleUdError(_udRenderTarget_SetTargets(
-        _renderTarget, pColorBuffer, colorClearValue, pDepthBuffer));
+        _renderTarget[0], pColorBuffer, colorClearValue, pDepthBuffer));
   }
 
   /// Set a memory buffers that a render target will write to (with pitch).
@@ -81,7 +82,7 @@ class UdRenderTarget extends UdSDKClass {
     final pColorBuffer = _colorBuffer.cast<Void>();
     final pDepthBuffer = _depthBuffer.cast<Void>();
     handleUdError(_udRenderTarget_SetTargetsWithPitch(
-        _renderTarget,
+        _renderTarget[0],
         pColorBuffer,
         colorClearValue,
         pDepthBuffer,
@@ -94,7 +95,7 @@ class UdRenderTarget extends UdSDKClass {
     Pointer<Double> cameraMatrix = allocate(count: 16);
     try {
       handleUdError(_udRenderTarget_GetMatrix(
-          _renderTarget, matrixType.index, cameraMatrix));
+          _renderTarget[0], matrixType.index, cameraMatrix));
       return cameraMatrix.asTypedList(16);
     } catch (err) {
       throw err;
@@ -113,7 +114,7 @@ class UdRenderTarget extends UdSDKClass {
     assert(_renderTarget != nullptr);
     try {
       handleUdError(_udRenderTarget_SetMatrix(
-          _renderTarget.address, matrixType.index, _matrices[matrixType]));
+          _renderTarget[0], matrixType.index, _matrices[matrixType]));
       this._matrices[matrixType] = matrix;
       assert(this._matrices[matrixType] == matrix);
     } catch (err) {
@@ -147,9 +148,9 @@ enum udRenderTargetMatrix {
 // udRenderTarget_Create
 // C declaration: udError udRenderTarget_Create(struct udContext *pContext, struct udRenderTarget **ppRenderTarget, struct udRenderContext *pRenderer, uint32_t width, uint32_t height);
 typedef _udRenderTarget_Create_native = Int32 Function(
-    Pointer, Pointer<IntPtr>, Pointer<IntPtr>, Uint32, Uint32);
+    IntPtr, Pointer<IntPtr>, IntPtr, Uint32, Uint32);
 typedef _udRenderTarget_Create_dart = int Function(
-    Pointer, Pointer<IntPtr>, Pointer<IntPtr>, int, int);
+    int, Pointer<IntPtr>, int, int, int);
 final _udRenderTarget_CreatePointer =
     udSdkLib.lookup<NativeFunction<_udRenderTarget_Create_native>>(
         'udRenderTarget_Create');
@@ -168,10 +169,11 @@ final _udRenderTarget_Destroy =
 
 // udRenderTarget_SetTargets
 // C declaration: udError udRenderTarget_SetTargets(struct udRenderTarget *pRenderTarget, void *pColorBuffer, uint32_t colorClearValue, void *pDepthBuffer);
+// TODO maybe change the Point<Void> to IntPtr ??
 typedef _udRenderTarget_SetTargets_native = Int32 Function(
-    Pointer<IntPtr>, Pointer<Void>, Uint32, Pointer<Void>);
+    IntPtr, Pointer<Void>, Uint32, Pointer<Void>);
 typedef _udRenderTarget_SetTargets_dart = int Function(
-    Pointer<IntPtr>, Pointer<Void>, int, Pointer<Void>);
+    int, Pointer<Void>, int, Pointer<Void>);
 final _udRenderTarget_SetTargetsPointer =
     udSdkLib.lookup<NativeFunction<_udRenderTarget_SetTargets_native>>(
         'udRenderTarget_SetTargets');
@@ -180,10 +182,11 @@ final _udRenderTarget_SetTargets = _udRenderTarget_SetTargetsPointer
 
 // udRenderTarget_SetTargetsWithPitch
 // C declaration: udError udRenderTarget_SetTargetsWithPitch(struct udRenderTarget *pRenderTarget, void *pColorBuffer, uint32_t colorClearValue, void *pDepthBuffer, uint32_t colorPitchInBytes, uint32_t depthPitchInBytes);
+// TODO maybe change the Point<Void> to IntPtr ??
 typedef _udRenderTarget_SetTargetsWithPitch_native = Int32 Function(
-    Pointer<IntPtr>, Pointer<Void>, Uint32, Pointer<Void>, Uint32, Uint32);
+    IntPtr, Pointer<Void>, Uint32, Pointer<Void>, Uint32, Uint32);
 typedef _udRenderTarget_SetTargetsWithPitch_dart = int Function(
-    Pointer<IntPtr>, Pointer<Void>, int, Pointer<Void>, int, int);
+    int, Pointer<Void>, int, Pointer<Void>, int, int);
 final _udRenderTarget_SetTargetsWithPitchPointer =
     udSdkLib.lookup<NativeFunction<_udRenderTarget_SetTargetsWithPitch_native>>(
         'udRenderTarget_SetTargetsWithPitch');
@@ -194,9 +197,9 @@ final _udRenderTarget_SetTargetsWithPitch =
 // udRenderTarget_GetMatrix
 // C declaration: udError udRenderTarget_GetMatrix(const struct udRenderTarget *pRenderTarget, enum udRenderTargetMatrix matrixType, double cameraMatrix[16]);
 typedef _udRenderTarget_GetMatrix_native = Int32 Function(
-    Pointer<IntPtr>, Int32, Pointer<Double>);
+    IntPtr, Int32, Pointer<Double>);
 typedef _udRenderTarget_GetMatrix_dart = int Function(
-    Pointer<IntPtr>, int, Pointer<Double>);
+    int, int, Pointer<Double>);
 final _udRenderTarget_GetMatrixPointer =
     udSdkLib.lookup<NativeFunction<_udRenderTarget_GetMatrix_native>>(
         'udRenderTarget_GetMatrix');
@@ -206,7 +209,7 @@ final _udRenderTarget_GetMatrix = _udRenderTarget_GetMatrixPointer
 // udRenderTarget_SetMatrix
 // C declaration: udError udRenderTarget_SetMatrix(struct udRenderTarget *pRenderTarget, enum udRenderTargetMatrix matrixType, const double cameraMatrix[16]);
 typedef _udRenderTarget_SetMatrix_native = Int32 Function(
-    Int32, Int32, Pointer<Double>);
+    IntPtr, Int32, Pointer<Double>);
 typedef _udRenderTarget_SetMatrix_dart = int Function(
     int, int, Pointer<Double>);
 final _udRenderTarget_SetMatrixPointer =
