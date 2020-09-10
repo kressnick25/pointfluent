@@ -46,25 +46,23 @@ class UdRenderContext extends UdSDKClass {
     assert(renderPicking.pointCenter[2] != null);
   }
 
-  Pointer<IntPtr> get address => _renderContext;
+  int get address => this._renderContext[0];
 
   /// Create an instance of `udRenderContext` for rendering
   void create(UdContext udContext) {
-    handleUdError(_udRenderContext_Create(
-        udContext.address[0], Pointer.fromAddress(_renderContext.address)));
+    handleUdError(_udRenderContext_Create(udContext.address, _renderContext));
   }
 
   /// Destroy the instance of the renderer
   void destroy() {
-    handleUdError(
-        _udRenderContext_Destroy(Pointer.fromAddress(_renderContext.address)));
+    handleUdError(_udRenderContext_Destroy(_renderContext));
   }
 
   /// Render the models from the persepective of `pRenderView`
   void render(UdRenderTarget renderTarget, int modelCount) {
     handleUdError(_udRenderContext_Render(
         _renderContext[0],
-        renderTarget.address[0],
+        renderTarget.address,
         renderInstance.addressOf.cast<IntPtr>()[0],
         modelCount,
         renderSettings.addressOf.cast<IntPtr>()[0]));

@@ -33,11 +33,11 @@ class UdRenderTarget extends UdSDKClass {
     assert(_depthBuffer[_bufferLength] != null);
   }
 
-  Pointer<IntPtr> get address => _renderTarget;
+  int get address => this._renderTarget[0];
 
-  get colorBuffer => _colorBuffer.asTypedList(_bufferLength);
+  Int64List get colorBuffer => this._colorBuffer.asTypedList(_bufferLength);
 
-  get depthBuffer => _depthBuffer.asTypedList(_bufferLength);
+  Float32List get depthBuffer => this._depthBuffer.asTypedList(_bufferLength);
 
   /// Create a udRenderTarget with a viewport using `width` and `height`.
   void create(UdContext udContext, UdRenderContext renderContext, int width,
@@ -45,9 +45,9 @@ class UdRenderTarget extends UdSDKClass {
     final ppRenderTarget =
         Pointer.fromAddress(_renderTarget.address).cast<IntPtr>();
     handleUdError(_udRenderTarget_Create(
-      udContext.address[0],
+      udContext.address,
       ppRenderTarget,
-      renderContext.address[0],
+      renderContext.address,
       width,
       height,
     ));
@@ -121,7 +121,7 @@ class UdRenderTarget extends UdSDKClass {
 }
 
 /// Stores the internal state of a udSDK render target
-class udRenderTarget extends Struct {}
+class udRenderTarget extends Struct {};
 
 /// These are the various matrix types used within the render target
 enum udRenderTargetMatrix {

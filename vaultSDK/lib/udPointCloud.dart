@@ -27,12 +27,12 @@ class UdPointCloud extends UdSDKClass {
     assert(header.pivot != null);
   }
 
-  Pointer<IntPtr> get address => _pointCloud;
+  int get address => this._pointCloud[0];
 
   void load(UdContext udContext, String modelLocation) {
     final pModelLocation = Utf8.toUtf8(modelLocation);
     final err = _udPointCloud_Load(udContext.address, this._pointCloud,
-        pModelLocation, this.header.addressOf);
+        pModelLocation, this.header.addressOf.address);
     free(pModelLocation);
 
     handleUdError(err);
@@ -43,8 +43,8 @@ class UdPointCloud extends UdSDKClass {
   }
 
   void getHeader(UdContext udContext) {
-    handleUdError(
-        _udPointCloud_GetHeader(udContext.address, this.header.addressOf));
+    handleUdError(_udPointCloud_GetHeader(
+        udContext.address, this.header.addressOf.address));
   }
 
   //udError getMetaData() {}
@@ -489,9 +489,9 @@ class _ArrayHelper_udPointCloudHeader_boundingBoxExtents extends ArrayHelper {
 //! @note The application should call **udPointCloud_Unload** with `ppModel` to destroy the object once it's no longer needed.
 //!
 typedef _udPointCloud_Load_native = Int32 Function(
-    Pointer, Pointer<IntPtr>, Pointer<Utf8>, Pointer);
+    IntPtr, Pointer<IntPtr>, Pointer<Utf8>, IntPtr);
 typedef _udPointCloud_Load_dart = int Function(
-    Pointer, Pointer<IntPtr>, Pointer<Utf8>, Pointer<udPointCloudHeader>);
+    int, Pointer<IntPtr>, Pointer<Utf8>, int);
 final _udPointCloud_LoadPointer = udSdkLib
     .lookup<NativeFunction<_udPointCloud_Load_native>>('udPointCloud_Load');
 final _udPointCloud_Load =
@@ -521,9 +521,8 @@ final _udPointCloud_Unload =
 //! @return A udError value based on the result of getting the model header.
 //! @note All Unlimited Detail models are assumed to be from { 0, 0, 0 } to { 1, 1, 1 }. Any scaling applied to the model will be in this matrix along with the translation and rotation.
 //!
-typedef _udPointCloud_GetHeader_native = Int32 Function(Pointer, Pointer);
-typedef _udPointCloud_GetHeader_dart = int Function(
-    Pointer, Pointer<udPointCloudHeader>);
+typedef _udPointCloud_GetHeader_native = Int32 Function(IntPtr, IntPtr);
+typedef _udPointCloud_GetHeader_dart = int Function(int, int);
 final _udPointCloud_GetHeaderPointer =
     udSdkLib.lookup<NativeFunction<_udPointCloud_GetHeader_native>>(
         'udPointCloud_GetHeader');

@@ -11,7 +11,7 @@ class UdContext extends UdSDKClass {
     this._context = allocate();
   }
 
-  Pointer<IntPtr> get address => this._context;
+  int get address => this._context[0];
 
   // Call these functions in flutter widgets
   void connect(email, password,
