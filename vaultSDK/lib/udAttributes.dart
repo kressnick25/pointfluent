@@ -5,10 +5,23 @@ import 'package:ffi/ffi.dart';
 import 'udSdkLib.dart';
 
 class UdAttributeSet extends UdSDKClass {
-  Pointer<udAttributeSet> _attributeSet;
+  udAttributeSet _attributeSet;
   UdAttributeSet() {
-    this._attributeSet = allocate();
+    this._attributeSet = udAttributeSet.allocate();
+    assert(_attributeSet.allocated != null);
+    assert(_attributeSet.content != null);
+    assert(_attributeSet.count != null);
+
+    assert(_attributeSet.pDescriptors != nullptr);
+    assert(_attributeSet.pDescriptors[0].typeInfo != null);
+    assert(_attributeSet.pDescriptors[0].blendType != null);
+    assert(_attributeSet.pDescriptors[0].name[0] != null);
+    assert(_attributeSet.pDescriptors[0].name[63] != null);
+
+    cleanup();
   }
+
+  int get address => _attributeSet.addressOf.address;
 
   /// Creates a udAttributeSet
   ///
@@ -20,7 +33,7 @@ class UdAttributeSet extends UdSDKClass {
   ///
   void create(int udStdContent, int additionalCustomAttributes) {
     handleUdError(_udAttributeSet_Create(
-        _attributeSet, udStdContent, additionalCustomAttributes));
+        this.address, udStdContent, additionalCustomAttributes));
   }
 
   /// Free the memory created by a call to udAttributeSet_Generate
@@ -28,7 +41,7 @@ class UdAttributeSet extends UdSDKClass {
   /// @param pAttributeSet The attribute set to free the resources of
   /// @return A udError value based on the result of the destruction of the attribute set.
   void destroy() {
-    handleUdError(_udAttributeSet_Destroy(_attributeSet));
+    handleUdError(_udAttributeSet_Destroy(this.address));
   }
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
@@ -38,7 +51,7 @@ class UdAttributeSet extends UdSDKClass {
     final Pointer<Uint32> pOffset = allocate();
     try {
       handleUdError(_udAttributeSet_GetOffsetOfStandardAttribute(
-          _attributeSet, attribute, pOffset));
+          this.address, attribute, pOffset));
       return pOffset.value;
     } catch (err) {
       throw err;
@@ -53,7 +66,7 @@ class UdAttributeSet extends UdSDKClass {
     final pName = Utf8.toUtf8(name);
     try {
       handleUdError(_udAttributeSet_GetOffsetOfNamedAttribute(
-          _attributeSet, pName, pOffset));
+          this.address, pName, pOffset));
       return pOffset.value;
     } catch (err) {
       throw err;
@@ -62,21 +75,23 @@ class UdAttributeSet extends UdSDKClass {
       free(pOffset);
     }
   }
+
+  void cleanup() {
+    free(_attributeSet.pDescriptors);
+    free(_attributeSet.addressOf);
+  }
 }
 
-typedef _udAttributeSet_Create_native = Int32 Function(
-    Pointer<udAttributeSet>, Int32, Uint32);
-typedef _udAttributeSet_Create_dart = int Function(
-    Pointer<udAttributeSet>, int, int);
+typedef _udAttributeSet_Create_native = Int32 Function(IntPtr, Int32, Uint32);
+typedef _udAttributeSet_Create_dart = int Function(int, int, int);
 final _udAttributeSet_CreatePointer =
     udSdkLib.lookup<NativeFunction<_udAttributeSet_Create_native>>(
         'udAttributeSet_Create');
 final _udAttributeSet_Create =
     _udAttributeSet_CreatePointer.asFunction<_udAttributeSet_Create_dart>();
 
-typedef _udAttributeSet_Destroy_native = Int32 Function(
-    Pointer<udAttributeSet>);
-typedef _udAttributeSet_Destroy_dart = int Function(Pointer<udAttributeSet>);
+typedef _udAttributeSet_Destroy_native = Int32 Function(IntPtr);
+typedef _udAttributeSet_Destroy_dart = int Function(int);
 final _udAttributeSet_DestroyPointer =
     udSdkLib.lookup<NativeFunction<_udAttributeSet_Destroy_native>>(
         'udAttributeSet_Destroy');
@@ -84,9 +99,9 @@ final _udAttributeSet_Destroy =
     _udAttributeSet_DestroyPointer.asFunction<_udAttributeSet_Destroy_dart>();
 
 typedef _udAttributeSet_GetOffsetOfStandardAttribute_native = Int32 Function(
-    Pointer<udAttributeSet>, Int32, Pointer<Uint32>);
+    IntPtr, Int32, Pointer<Uint32>);
 typedef _udAttributeSet_GetOffsetOfStandardAttribute_dart = int Function(
-    Pointer<udAttributeSet>, int, Pointer<Uint32>);
+    int, int, Pointer<Uint32>);
 final _udAttributeSet_GetOffsetOfStandardAttributePointer = udSdkLib.lookup<
         NativeFunction<_udAttributeSet_GetOffsetOfStandardAttribute_native>>(
     'udAttributeSet_GetOffsetOfStandardAttribute');
@@ -95,9 +110,9 @@ final _udAttributeSet_GetOffsetOfStandardAttribute =
         .asFunction<_udAttributeSet_GetOffsetOfStandardAttribute_dart>();
 
 typedef _udAttributeSet_GetOffsetOfNamedAttribute_native = Int32 Function(
-    Pointer<udAttributeSet>, Pointer<Utf8>, Pointer<Uint32>);
+    IntPtr, Pointer<Utf8>, Pointer<Uint32>);
 typedef _udAttributeSet_GetOffsetOfNamedAttribute_dart = int Function(
-    Pointer<udAttributeSet>, Pointer<Utf8>, Pointer<Uint32>);
+    int, Pointer<Utf8>, Pointer<Uint32>);
 final _udAttributeSet_GetOffsetOfNamedAttributePointer = udSdkLib
     .lookup<NativeFunction<_udAttributeSet_GetOffsetOfNamedAttribute_native>>(
         'udAttributeSet_GetOffsetOfNamedAttribute');
@@ -232,6 +247,9 @@ class udAttributeSet extends Struct {
   // TODO properly allocate
   /// this contains the actual information on the attributes
   Pointer<udAttributeDescriptor> pDescriptors;
+
+  factory udAttributeSet.allocate() =>
+      allocate<udAttributeSet>().ref..pDescriptors = allocate();
 }
 
 /// Describes the contents of an attribute stream including its size, type and how it gets blended in LOD layers

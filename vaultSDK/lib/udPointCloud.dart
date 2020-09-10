@@ -51,6 +51,7 @@ class UdPointCloud extends UdSDKClass {
 
   void cleanup() {
     free(this._pointCloud);
+    free(this.header.attributes[0].pDescriptors);
     free(this.header.addressOf);
   }
 }
@@ -158,7 +159,7 @@ class udPointCloudHeader extends Struct {
   // Nested struct workaround as here:
   // https://github.com/dart-lang/sdk/blob/master/samples/ffi/coordinate.dart#L18-L19
   factory udPointCloudHeader.allocate() => allocate<udPointCloudHeader>().ref
-    ..attributes = allocate<udAttributeSet>();
+    ..attributes = udAttributeSet.allocate().addressOf;
 
   // factory udPointCloudHeader.allocate({
   //   double scaledRange,

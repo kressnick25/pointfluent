@@ -56,8 +56,7 @@ class UdRenderTarget extends UdSDKClass {
 
   /// Destroys the instance of `ppRenderTarget`.
   void destroy() {
-    final ppRenderTarget = Pointer.fromAddress(_renderTarget.address);
-    handleUdError(_udRenderTarget_Destroy(ppRenderTarget));
+    handleUdError(_udRenderTarget_Destroy(_renderTarget));
   }
 
   /// Set a memory buffers that a render target will write to.
