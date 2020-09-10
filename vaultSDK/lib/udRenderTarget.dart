@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
@@ -97,11 +98,10 @@ class UdRenderTarget extends UdSDKClass {
 
   // Set the matrix associated with `pRenderTarget` of type `matrixType` and get it from `cameraMatrix`.
   void setMatrix(udRenderTargetMatrix matrixType, List<double> cameraMatrix) {
-    // copy matrix to C typed list
-    Pointer<Double> matrix = allocate(count: 16);
-    for (int i = 0; i < _cameraMatrixLength; i++) {
-      matrix[i] = cameraMatrix[i];
-    }
+    if (cameraMatrix.length != 16)
+      throw new FormatException("cameraMatrix length must be 16");
+
+    final matrix = doubleListToCArray(cameraMatrix);
     assert(_renderTarget != nullptr);
     try {
       handleUdError(_udRenderTarget_SetMatrix(
