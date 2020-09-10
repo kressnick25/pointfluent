@@ -121,7 +121,7 @@ class UdRenderTarget extends UdSDKClass {
 }
 
 /// Stores the internal state of a udSDK render target
-class udRenderTarget extends Struct {};
+class udRenderTarget extends Struct {}
 
 /// These are the various matrix types used within the render target
 enum udRenderTargetMatrix {
