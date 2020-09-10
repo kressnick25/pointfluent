@@ -162,10 +162,8 @@ class udRenderSettings extends Struct {
 //   return 0;
 // }
 
-typedef voxelShaderType = Int32 Function(
-    Pointer<IntPtr>, Pointer<IntPtr>, Pointer<Void>);
-int voxelShader(Pointer<IntPtr> pPointCloud, Pointer<IntPtr> pVoxelID,
-    Pointer<Void> pVoxelUserData) {
+typedef voxelShaderType = Int32 Function(IntPtr, IntPtr, Pointer<Void>);
+int voxelShader(int pPointCloud, int pVoxelID, Pointer<Void> pVoxelUserData) {
   return 0;
 }
 
