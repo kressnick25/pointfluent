@@ -66,6 +66,8 @@ class UdException implements Exception {
         return "Security failure, try disabling cert verification.";
       case udError.udE_ProxyError:
         return "There was an issue with the provided proxy information.";
+      case udError.udE_InvalidParameter:
+        return "One or more parameters passed to a udSDK function was not of the expected format.";
 
       // Handle more errors here
       default:
