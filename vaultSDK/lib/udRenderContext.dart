@@ -60,17 +60,13 @@ class UdRenderContext extends UdSDKClass {
 
   /// Render the models from the persepective of `pRenderView`
   void render(UdRenderTarget renderTarget, int modelCount) {
-    assert(_renderContext[0] != null);
+    assert(this.address != null);
     assert(renderTarget.address != null);
     assert(renderInstance.addressOf != nullptr);
     assert(modelCount != null);
     assert(renderSettings.addressOf != nullptr);
-    handleUdError(_udRenderContext_Render(
-        _renderContext[0],
-        renderTarget.address,
-        renderInstance.addressOf.address,
-        modelCount,
-        renderSettings.addressOf.address));
+    handleUdError(_udRenderContext_Render(this.address, renderTarget.address,
+        renderInstance.addressOf, modelCount, renderSettings.addressOf));
   }
 
   void cleanup() {
@@ -438,8 +434,9 @@ final _udRenderContext_Destroy =
 // udRenderContext_Render
 // C declaration: udError udRenderContext_Render(struct udRenderContext *pRenderer, struct udRenderTarget *pRenderView, struct udRenderInstance *pModels, int modelCount, struct udRenderSettings *pRenderOptions);
 typedef _udRenderContext_Render_native = Int32 Function(
-    IntPtr, IntPtr, IntPtr, Int32, IntPtr);
-typedef _udRenderContext_Render_dart = int Function(int, int, int, int, int);
+    IntPtr, IntPtr, Pointer, Int32, Pointer);
+typedef _udRenderContext_Render_dart = int Function(
+    int, int, Pointer<udRenderInstance>, int, Pointer<udRenderSettings>);
 final _udRenderContext_RenderPointer =
     udSdkLib.lookup<NativeFunction<_udRenderContext_Render_native>>(
         'udRenderContext_Render');

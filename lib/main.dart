@@ -65,7 +65,6 @@ void main() {
       udRenderContextFlags.udRCF_BlockingStreaming;
 
   try {
-    // This segfaults most times, sometimes returns udE_SessionExpired
     renderContext.render(renderTarget, 1);
   } catch (e) {
     log(e.toString());
