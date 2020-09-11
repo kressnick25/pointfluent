@@ -60,12 +60,17 @@ class UdRenderContext extends UdSDKClass {
 
   /// Render the models from the persepective of `pRenderView`
   void render(UdRenderTarget renderTarget, int modelCount) {
+    assert(_renderContext[0] != null);
+    assert(renderTarget.address != null);
+    assert(renderInstance.addressOf != nullptr);
+    assert(modelCount != null);
+    assert(renderSettings.addressOf != nullptr);
     handleUdError(_udRenderContext_Render(
         _renderContext[0],
         renderTarget.address,
-        renderInstance.addressOf.cast<IntPtr>()[0],
+        renderInstance.addressOf.address,
         modelCount,
-        renderSettings.addressOf.cast<IntPtr>()[0]));
+        renderSettings.addressOf.address));
   }
 
   void cleanup() {
