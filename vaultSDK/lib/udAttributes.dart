@@ -21,7 +21,7 @@ class UdAttributeSet extends UdSDKClass {
     cleanup();
   }
 
-  int get address => _attributeSet.addressOf.address;
+  Pointer<udAttributeSet> get address => _attributeSet.addressOf;
 
   /// Creates a udAttributeSet
   ///
@@ -82,16 +82,18 @@ class UdAttributeSet extends UdSDKClass {
   }
 }
 
-typedef _udAttributeSet_Create_native = Int32 Function(IntPtr, Int32, Uint32);
-typedef _udAttributeSet_Create_dart = int Function(int, int, int);
+typedef _udAttributeSet_Create_native = Int32 Function(
+    Pointer<Struct>, Int32, Uint32);
+typedef _udAttributeSet_Create_dart = int Function(
+    Pointer<udAttributeSet>, int, int);
 final _udAttributeSet_CreatePointer =
     udSdkLib.lookup<NativeFunction<_udAttributeSet_Create_native>>(
         'udAttributeSet_Create');
 final _udAttributeSet_Create =
     _udAttributeSet_CreatePointer.asFunction<_udAttributeSet_Create_dart>();
 
-typedef _udAttributeSet_Destroy_native = Int32 Function(IntPtr);
-typedef _udAttributeSet_Destroy_dart = int Function(int);
+typedef _udAttributeSet_Destroy_native = Int32 Function(Pointer<Struct>);
+typedef _udAttributeSet_Destroy_dart = int Function(Pointer<udAttributeSet>);
 final _udAttributeSet_DestroyPointer =
     udSdkLib.lookup<NativeFunction<_udAttributeSet_Destroy_native>>(
         'udAttributeSet_Destroy');
@@ -99,9 +101,9 @@ final _udAttributeSet_Destroy =
     _udAttributeSet_DestroyPointer.asFunction<_udAttributeSet_Destroy_dart>();
 
 typedef _udAttributeSet_GetOffsetOfStandardAttribute_native = Int32 Function(
-    IntPtr, Int32, Pointer<Uint32>);
+    Pointer, Int32, Pointer<Uint32>);
 typedef _udAttributeSet_GetOffsetOfStandardAttribute_dart = int Function(
-    int, int, Pointer<Uint32>);
+    Pointer<udAttributeSet>, int, Pointer<Uint32>);
 final _udAttributeSet_GetOffsetOfStandardAttributePointer = udSdkLib.lookup<
         NativeFunction<_udAttributeSet_GetOffsetOfStandardAttribute_native>>(
     'udAttributeSet_GetOffsetOfStandardAttribute');
@@ -110,9 +112,9 @@ final _udAttributeSet_GetOffsetOfStandardAttribute =
         .asFunction<_udAttributeSet_GetOffsetOfStandardAttribute_dart>();
 
 typedef _udAttributeSet_GetOffsetOfNamedAttribute_native = Int32 Function(
-    IntPtr, Pointer<Utf8>, Pointer<Uint32>);
+    Pointer<Struct>, Pointer<Utf8>, Pointer<Uint32>);
 typedef _udAttributeSet_GetOffsetOfNamedAttribute_dart = int Function(
-    int, Pointer<Utf8>, Pointer<Uint32>);
+    Pointer<udAttributeSet>, Pointer<Utf8>, Pointer<Uint32>);
 final _udAttributeSet_GetOffsetOfNamedAttributePointer = udSdkLib
     .lookup<NativeFunction<_udAttributeSet_GetOffsetOfNamedAttribute_native>>(
         'udAttributeSet_GetOffsetOfNamedAttribute');

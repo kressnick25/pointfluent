@@ -434,7 +434,7 @@ final _udRenderContext_Destroy =
 // udRenderContext_Render
 // C declaration: udError udRenderContext_Render(struct udRenderContext *pRenderer, struct udRenderTarget *pRenderView, struct udRenderInstance *pModels, int modelCount, struct udRenderSettings *pRenderOptions);
 typedef _udRenderContext_Render_native = Int32 Function(
-    IntPtr, IntPtr, Pointer, Int32, Pointer);
+    IntPtr, IntPtr, Pointer<Struct>, Int32, Pointer<Struct>);
 typedef _udRenderContext_Render_dart = int Function(
     int, int, Pointer<udRenderInstance>, int, Pointer<udRenderSettings>);
 final _udRenderContext_RenderPointer =
