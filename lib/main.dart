@@ -60,6 +60,8 @@ void main() {
 
   renderContext.renderInstance.setMatrix(cameraMatrix);
 
+  renderTarget.setTargets();
+
   renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, cameraMatrix);
   renderContext.renderSettings.flags =
       udRenderContextFlags.udRCF_BlockingStreaming;
