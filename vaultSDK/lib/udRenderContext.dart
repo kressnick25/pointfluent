@@ -442,9 +442,3 @@ final _udRenderContext_RenderPointer =
         'udRenderContext_Render');
 final _udRenderContext_Render =
     _udRenderContext_RenderPointer.asFunction<_udRenderContext_Render_dart>();
-
-typedef voxelShader_native = Int32 Function(Pointer, Pointer, Pointer<Void>);
-typedef voxelShader_dart = int Function(Pointer, Pointer, Pointer<Void>);
-
-final voxelShader_Pointer =
-    udSdkLib.lookup<NativeFunction<voxelShader_native>>('pVoxelShader');
