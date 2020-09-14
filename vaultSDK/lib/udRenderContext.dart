@@ -24,7 +24,7 @@ class UdRenderContext extends UdSDKClass {
 
     assert(renderInstance.pPointCloud != nullptr);
     assert(renderInstance.pFilter != nullptr);
-    assert(renderInstance.pVoxelShader != nullptr);
+    // assert(renderInstance.pVoxelShader != nullptr);
     assert(renderInstance.pVoxelUserData != nullptr);
     assert(renderInstance.storedMatrix != nullptr);
     assert(renderInstance.storedMatrix[0] != null);
@@ -232,7 +232,7 @@ class udRenderInstance extends Struct {
   }
 
   factory udRenderInstance.allocate() => allocate<udRenderInstance>().ref
-    ..pVoxelShader = Pointer.fromFunction<voxelShaderType>(voxelShader, 0)
+    // ..pVoxelShader = Pointer.fromFunction<voxelShaderType>(voxelShader, 0)
     ..pPointCloud = allocate()
     ..pFilter = allocate()
     ..pVoxelUserData = allocate();
