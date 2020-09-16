@@ -29,6 +29,7 @@ abstract class UdSDKClass {
 
   void setMounted() => this._mounted = true;
 
+  @protected
   void checkMounted() {
     try {
       assert(_mounted);
