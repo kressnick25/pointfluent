@@ -1,4 +1,5 @@
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
 
 import 'udSdkLib.dart';
@@ -22,6 +23,7 @@ class UdPointCloud extends UdSDKClass {
     return this._pointCloud[0];
   }
 
+  /// Load a udPointCloud from `modelLocation` path.
   void load(UdContext udContext, String modelLocation) {
     checkMounted();
     final pModelLocation = Utf8.toUtf8(modelLocation);
@@ -32,18 +34,18 @@ class UdPointCloud extends UdSDKClass {
     handleUdError(err);
   }
 
+  /// Destroys the udPointCloud.
   void unLoad() {
     checkMounted();
     handleUdError(_udPointCloud_Unload(this._pointCloud));
   }
 
+  /// Update the udPointCloudHeader of this class
   void getHeader(UdContext udContext) {
     checkMounted();
     handleUdError(
         _udPointCloud_GetHeader(udContext.address, this.header.addressOf));
   }
-
-  //udError getMetaData() {}
 
   void dispose() {
     checkMounted();
@@ -172,54 +174,6 @@ class udPointCloudHeader extends Struct {
   // https://github.com/dart-lang/sdk/blob/master/samples/ffi/coordinate.dart#L18-L19
   factory udPointCloudHeader.allocate() => allocate<udPointCloudHeader>().ref
     ..attributes = udAttributeSet.allocate().addressOf;
-
-  // factory udPointCloudHeader.allocate({
-  //   double scaledRange,
-  //   double unitMeterScale,
-  //   int totalLODLayers,
-  //   double convertedResolution,
-  //   Pointer<udAttributeSet> attributes,
-  //   List<double> storedMatrix,
-  //   List<double> baseOffset,
-  //   List<double> pivot,
-  //   List<double> boundingBoxCenter,
-  //   List<double> boudingBoxExtents,
-  // }) {
-  //   return allocate<udPointCloudHeader>().ref
-  //     ..scaledRange = scaledRange
-  //     ..unitMeterScale = unitMeterScale
-  //     ..totalLODLayers = totalLODLayers
-  //     ..convertedResolution = convertedResolution
-  //     ..attributes
-  //     .._baseOffset_0 = baseOffset[0]
-  //     .._baseOffset_1 = baseOffset[1]
-  //     .._baseOffset_2 = baseOffset[2]
-  //     .._pivot_0 = pivot[0]
-  //     .._pivot_1 = pivot[1]
-  //     .._pivot_2 = pivot[2]
-  //     .._boundingBoxCenter_0 = boundingBoxCenter[0]
-  //     .._boundingBoxCenter_1 = boundingBoxCenter[1]
-  //     .._boundingBoxCenter_2 = boundingBoxCenter[2]
-  //     .._boundingBoxExtents_0 = boundingBoxCenter[0]
-  //     .._boundingBoxExtents_1 = boundingBoxCenter[1]
-  //     .._boundingBoxExtents_2 = boundingBoxCenter[2]
-  //     .._storedMatrix_1 = 0
-  //     .._storedMatrix_1 = storedMatrix[1]
-  //     .._storedMatrix_2 = storedMatrix[2]
-  //     .._storedMatrix_3 = storedMatrix[3]
-  //     .._storedMatrix_4 = storedMatrix[4]
-  //     .._storedMatrix_5 = storedMatrix[5]
-  //     .._storedMatrix_6 = storedMatrix[6]
-  //     .._storedMatrix_7 = storedMatrix[7]
-  //     .._storedMatrix_8 = storedMatrix[8]
-  //     .._storedMatrix_9 = storedMatrix[9]
-  //     .._storedMatrix_10 = storedMatrix[10]
-  //     .._storedMatrix_11 = storedMatrix[11]
-  //     .._storedMatrix_12 = storedMatrix[12]
-  //     .._storedMatrix_13 = storedMatrix[13]
-  //     .._storedMatrix_14 = storedMatrix[14]
-  //     .._storedMatrix_15 = storedMatrix[15];
-  // }
 
   get storedMatrix =>
       _ArrayHelper_udPointCloudHeader_storedMatrix(this, [3], 0, 0);

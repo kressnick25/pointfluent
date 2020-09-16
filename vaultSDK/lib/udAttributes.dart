@@ -19,12 +19,8 @@ class UdAttributeSet extends UdSDKClass {
 
   /// Creates a udAttributeSet
   ///
-  /// @param pAttributeSet The attribute set to allocate into
-  /// @param content The standard attributes that will be created, provided as bitfields
-  /// @param additionalCustomAttributes The count of additional attributes to generate, these will be added to the attribute set blank after the standard attributes
-  /// @return A udError value based on the result of the creation of the attribute set.
-  /// @note The application should call udAttributeSet_Free with pAttributeSet to destroy the object once it's no longer needed.
-  ///
+  /// `content`: the standard attributes that will be created, provided as bitfields
+  /// `additionalCustomAttributes`: the count of additional attributes to generate, these will be added to the attribute set blank after the standard attributes
   void create(int udStdContent, int additionalCustomAttributes) {
     checkMounted();
     handleUdError(_udAttributeSet_Create(
@@ -32,9 +28,6 @@ class UdAttributeSet extends UdSDKClass {
   }
 
   /// Free the memory created by a call to udAttributeSet_Generate
-  ///
-  /// @param pAttributeSet The attribute set to free the resources of
-  /// @return A udError value based on the result of the destruction of the attribute set.
   void destroy() {
     checkMounted();
     handleUdError(_udAttributeSet_Destroy(this.address));

@@ -1,12 +1,8 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:ffi/ffi.dart';
-import 'package:flutter/material.dart';
 
+import 'package:ffi/ffi.dart';
 import 'package:vaultSDK/udContext.dart';
-import 'package:vaultSDK/udPointCloud.dart';
 import 'package:vaultSDK/udRenderContext.dart';
 import 'package:vaultSDK/udSdkLib.dart';
 
