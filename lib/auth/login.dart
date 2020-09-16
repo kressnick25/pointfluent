@@ -104,10 +104,6 @@ class _LoginPageState extends State<LoginPage> {
     userPrefs.setBool('certval', value);
   }
 
-  Future<void> connect(String username, String password) async {
-    widget.udContext.connect(username, password);
-  }
-
   onSubmit() async {
     _formKey.currentState.save();
     setState(() {
@@ -123,11 +119,12 @@ class _LoginPageState extends State<LoginPage> {
     // bind local state to udConfig state
     UdConfig.ignoreCertificateVerification(_ignoreCert);
     try {
-      // widget.udContext.connect(user.username, user.password);
-      await connect(user.username, user.password).then((value) => setState(() {
-            _error.message = null;
-            _isLoading = false;
-          }));
+      widget.udContext.connect(user.username, user.password);
+
+      setState(() {
+        _error.message = null;
+        _isLoading = false;
+      });
 
       Navigator.popAndPushNamed(
         context,
@@ -153,166 +150,170 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Form(
         key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 50, left: 50, right: 50),
-              child: KeyboardVisibilityBuilder(
-                builder: (context, child, isKeyboardVisible) {
-                  return isKeyboardVisible
-                      ? emptyWidget
-                      : Image.asset(Constants.img_pointfluentLogo500,
-                          height: 200, width: 200);
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: KeyboardVisibilityBuilder(
-                builder: (context, child, isKeyboardVisible) {
-                  return isKeyboardVisible
-                      ? emptyWidget
-                      : Image.asset(Constants.img_eu_powered_logo,
-                          height: 50, width: 100);
-                },
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey[50],
-                  borderRadius: new BorderRadius.circular(5.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 50, left: 50, right: 50),
+                child: KeyboardVisibilityBuilder(
+                  builder: (context, child, isKeyboardVisible) {
+                    return isKeyboardVisible
+                        ? emptyWidget
+                        : Image.asset(Constants.img_pointfluentLogo500,
+                            height: 200, width: 200);
+                  },
                 ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-                  child: TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Email',
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: KeyboardVisibilityBuilder(
+                  builder: (context, child, isKeyboardVisible) {
+                    return isKeyboardVisible
+                        ? emptyWidget
+                        : Image.asset(Constants.img_eu_powered_logo,
+                            height: 50, width: 100);
+                  },
+                ),
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey[50],
+                    borderRadius: new BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Email',
+                      ),
+                      validator: (value) {
+                        return value.isEmpty
+                            ? 'Please enter your email.'
+                            : null;
+                      },
+                      onSaved: (String value) async {
+                        user.username = value;
+                      },
                     ),
-                    validator: (value) {
-                      return value.isEmpty ? 'Please enter your email.' : null;
-                    },
-                    onSaved: (String value) async {
-                      user.username = value;
-                    },
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 30, right: 30, bottom: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey[50],
-                  borderRadius: new BorderRadius.circular(5.0),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-                  child: TextFormField(
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Password',
+              Padding(
+                padding: EdgeInsets.only(left: 30, right: 30, bottom: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey[50],
+                    borderRadius: new BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Password',
+                      ),
+                      validator: (value) {
+                        return value.isEmpty
+                            ? 'Please enter your password.'
+                            : null;
+                      },
+                      onSaved: (String value) async {
+                        user.password = value;
+                      },
                     ),
-                    validator: (value) {
-                      return value.isEmpty
-                          ? 'Please enter your password.'
-                          : null;
-                    },
-                    onSaved: (String value) async {
-                      user.password = value;
-                    },
                   ),
                 ),
               ),
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  height: 50,
-                  child: CheckboxListTile(
-                    title: Text('Remember Me'),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: _rememberMe,
-                    onChanged: (bool value) {
-                      _updateRememberMe(value);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  child: ButtonTheme(
-                    minWidth: MediaQuery.of(context).size.width * 0.5,
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
                     height: 50,
-                    child: FlatButton(
-                      color: Theme.of(context).backgroundColor,
-                      onPressed: _launchForgotPasswordURL,
-                      child: Text(
-                        'Forgot Password?',
+                    child: CheckboxListTile(
+                      title: Text('Remember Me'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: _rememberMe,
+                      onChanged: (bool value) {
+                        _updateRememberMe(value);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    child: ButtonTheme(
+                      minWidth: MediaQuery.of(context).size.width * 0.5,
+                      height: 50,
+                      child: FlatButton(
+                        color: Theme.of(context).backgroundColor,
+                        onPressed: _launchForgotPasswordURL,
+                        child: Text(
+                          'Forgot Password?',
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: ButtonTheme(
-                minWidth: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.07,
-                child: RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  onPressed: () async {
-                    // Validate will return true if the form is valid, or false if
-                    // the form is invalid.
-                    if (_formKey.currentState.validate()) {
-                      onSubmit();
-                    }
-                  },
-                  child: _isLoading
-                      ? CircularProgressIndicator(
-                          backgroundColor: Colors.white,
-                        )
-                      : Text(
-                          'Login',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(),
-              child: ButtonTheme(
-                minWidth: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.07,
-                child: FlatButton(
-                  color: Theme.of(context).backgroundColor,
-                  onPressed: _launchRegisterURL,
-                  child: Text(
-                    'Register',
-                    style: TextStyle(fontSize: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: ButtonTheme(
+                  minWidth: MediaQuery.of(context).size.width * 0.85,
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  child: RaisedButton(
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                    onPressed: () async {
+                      // Validate will return true if the form is valid, or false if
+                      // the form is invalid.
+                      if (_formKey.currentState.validate()) {
+                        onSubmit();
+                      }
+                    },
+                    child: _isLoading
+                        ? CircularProgressIndicator(
+                            backgroundColor: Colors.white,
+                          )
+                        : Text(
+                            'Login',
+                            style: TextStyle(fontSize: 20),
+                          ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              width: 500,
-              height: 50,
-              child: CheckboxListTile(
-                  title: Text('Ignore Certificate Security'),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _ignoreCert,
-                  onChanged: (bool value) {
-                    _updateCertVal(value);
-                  }),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(),
+                child: ButtonTheme(
+                  minWidth: MediaQuery.of(context).size.width * 0.85,
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  child: FlatButton(
+                    color: Theme.of(context).backgroundColor,
+                    onPressed: _launchRegisterURL,
+                    child: Text(
+                      'Register',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 500,
+                height: 50,
+                child: CheckboxListTile(
+                    title: Text('Ignore Certificate Security'),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: _ignoreCert,
+                    onChanged: (bool value) {
+                      _updateCertVal(value);
+                    }),
+              ),
+            ],
+          ),
         ),
       ),
     );
