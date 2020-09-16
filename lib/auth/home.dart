@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _errMessage;
+  ErrorMsg _error = ErrorMsg();
 
   void _handleFileSelect() async {
     var filePath = await FilePicker.getFilePath(type: FileType.any);
@@ -32,9 +32,12 @@ class _HomePageState extends State<HomePage> {
 
     try {
       widget.pointCloud.load(widget.udContext, filePath);
-      setState(() => _errMessage = null);
+      setState(() => _error.message = null);
     } catch (err) {
-      setState(() => _errMessage = err.toString());
+      setState(() {
+        _error.message = err.toString();
+        _error.showAlertDialog(context);
+      });
     }
   }
 
@@ -73,7 +76,6 @@ class _HomePageState extends State<HomePage> {
               title: 'Logout',
               trailing: Icon(Icons.keyboard_arrow_right),
               onTap: () => Navigator.popAndPushNamed(context, '/')),
-          ErrorMsg(message: _errMessage),
         ],
       ),
     );

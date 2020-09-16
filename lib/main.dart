@@ -38,9 +38,13 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
         title: 'Flutter Demo',
+        //Set to true to display the debug banner in build mode
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: customColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          backgroundColor: Colors.white,
+          fontFamily: 'Roboto',
         ),
         initialRoute: '/',
         routes: {
