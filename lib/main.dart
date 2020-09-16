@@ -1,17 +1,38 @@
-import 'dart:ffi';
 import 'dart:developer';
+import 'dart:ffi';
 
-import 'package:vaultSDK/udConfig.dart';
+import 'package:ffi/ffi.dart';
+import 'package:flutter/material.dart';
 import 'package:vaultSDK/udContext.dart';
-import 'package:vaultSDK/udRenderTarget.dart';
 import 'package:vaultSDK/udRenderContext.dart';
+import 'package:vaultSDK/udRenderTarget.dart';
 import 'package:vaultSDK/udPointCloud.dart';
+import 'package:vaultSDK/udConfig.dart';
+
+import 'package:vaultSDK/udError.dart';
+import 'package:flutter/foundation.dart';
+
+import 'auth/login.dart';
+import 'auth/home.dart';
+import 'auth/settings.dart';
 
 const List<double> cameraMatrix = [
-  1, 0, 0, 0, //
-  0, 1, 0, 0, //
-  0, 0, 1, 0, //
-  5, -75, 5, 1 //
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  5,
+  -75,
+  5,
+  1
 ];
 
 void main() {
@@ -51,8 +72,30 @@ void main() {
     log(e.toString());
   }
 
-  pointCloud.cleanup();
-  renderTarget.cleanup();
-  renderContext.cleanup();
-  udContext.disconnect();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  final udContext = UdContext();
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.cyan,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        initialRoute: '/',
+        routes: {
+          LoginPage.routeName: (context) => LoginPage(
+                udContext: udContext,
+              ),
+          HomePage.routeName: (context) => HomePage(
+                udContext: udContext,
+              ),
+          SettingsPage.routeName: (context) => SettingsPage(),
+        });
+  }
 }

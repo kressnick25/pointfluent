@@ -17,6 +17,8 @@ class UdAttributeSet extends UdSDKClass {
     assert(_attributeSet.pDescriptors[0].blendType != null);
     assert(_attributeSet.pDescriptors[0].name[0] != null);
     assert(_attributeSet.pDescriptors[0].name[63] != null);
+
+    cleanup();
   }
 
   Pointer<udAttributeSet> get address => _attributeSet.addressOf;
