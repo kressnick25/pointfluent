@@ -19,7 +19,7 @@ class UdPointCloud extends UdSDKClass {
 
   int get address {
     checkMounted();
-    this._pointCloud[0];
+    return this._pointCloud[0];
   }
 
   void load(UdContext udContext, String modelLocation) {
