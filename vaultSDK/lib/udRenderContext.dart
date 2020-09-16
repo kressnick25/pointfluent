@@ -21,7 +21,49 @@ class UdRenderContext extends UdSDKClass {
     this.renderInstance = udRenderInstance.allocate();
     this.renderPicking = udRenderPicking.allocate();
     this.renderSettings = udRenderSettings.allocate();
+    _nullChecks();
+    setMounted();
+  }
 
+  int get address {
+    checkMounted();
+    return this._renderContext[0];
+  }
+
+  /// Create an instance of `udRenderContext` for rendering
+  void create(UdContext udContext) {
+    checkMounted();
+    handleUdError(_udRenderContext_Create(udContext.address, _renderContext));
+  }
+
+  /// Destroy the instance of the renderer
+  void destroy() {
+    checkMounted();
+    handleUdError(_udRenderContext_Destroy(_renderContext));
+    this.dispose();
+  }
+
+  /// Render the models from the persepective of `pRenderView`
+  void render(UdRenderTarget renderTarget, int modelCount) {
+    checkMounted();
+    assert(this.address != null);
+    assert(renderTarget.address != null);
+    assert(renderInstance.addressOf != nullptr);
+    assert(modelCount != null);
+    assert(renderSettings.addressOf != nullptr);
+    handleUdError(_udRenderContext_Render(this.address, renderTarget.address,
+        renderInstance.addressOf, modelCount, renderSettings.addressOf));
+  }
+
+  void dispose() {
+    checkMounted();
+    free(_renderContext);
+    free(renderInstance.addressOf);
+    free(renderSettings.addressOf);
+    super.dispose();
+  }
+
+  void _nullChecks() {
     assert(renderInstance.pPointCloud != nullptr);
     assert(renderInstance.pFilter != nullptr);
     // assert(renderInstance.pVoxelShader != nullptr);
@@ -44,35 +86,6 @@ class UdRenderContext extends UdSDKClass {
     assert(renderPicking.pointCenter != nullptr);
     assert(renderPicking.pointCenter[0] != null);
     assert(renderPicking.pointCenter[2] != null);
-  }
-
-  int get address => this._renderContext[0];
-
-  /// Create an instance of `udRenderContext` for rendering
-  void create(UdContext udContext) {
-    handleUdError(_udRenderContext_Create(udContext.address, _renderContext));
-  }
-
-  /// Destroy the instance of the renderer
-  void destroy() {
-    handleUdError(_udRenderContext_Destroy(_renderContext));
-  }
-
-  /// Render the models from the persepective of `pRenderView`
-  void render(UdRenderTarget renderTarget, int modelCount) {
-    assert(this.address != null);
-    assert(renderTarget.address != null);
-    assert(renderInstance.addressOf != nullptr);
-    assert(modelCount != null);
-    assert(renderSettings.addressOf != nullptr);
-    handleUdError(_udRenderContext_Render(this.address, renderTarget.address,
-        renderInstance.addressOf, modelCount, renderSettings.addressOf));
-  }
-
-  void cleanup() {
-    free(_renderContext);
-    free(renderInstance.addressOf);
-    free(renderSettings.addressOf);
   }
 }
 

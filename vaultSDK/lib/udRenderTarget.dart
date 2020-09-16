@@ -25,24 +25,29 @@ class UdRenderTarget extends UdSDKClass {
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
 
-    assert(_renderTarget != nullptr);
-    assert(_colorBuffer != nullptr);
-    assert(_colorBuffer[0] != null);
-    assert(_colorBuffer[_bufferLength] != null);
-    assert(_depthBuffer != nullptr);
-    assert(_depthBuffer[0] != null);
-    assert(_depthBuffer[_bufferLength] != null);
+    _nullChecks();
+    setMounted();
   }
 
-  int get address => this._renderTarget[0];
+  int get address {
+    checkMounted();
+    return this._renderTarget[0];
+  }
 
-  Int64List get colorBuffer => this._colorBuffer.asTypedList(_bufferLength);
+  Int64List get colorBuffer {
+    checkMounted();
+    return this._colorBuffer.asTypedList(_bufferLength);
+  }
 
-  Float32List get depthBuffer => this._depthBuffer.asTypedList(_bufferLength);
+  Float32List get depthBuffer {
+    checkMounted();
+    return this._depthBuffer.asTypedList(_bufferLength);
+  }
 
   /// Create a udRenderTarget with a viewport using `width` and `height`.
   void create(UdContext udContext, UdRenderContext renderContext, int width,
       int height) {
+    checkMounted();
     final ppRenderTarget =
         Pointer.fromAddress(_renderTarget.address).cast<IntPtr>();
     handleUdError(_udRenderTarget_Create(
@@ -56,11 +61,14 @@ class UdRenderTarget extends UdSDKClass {
 
   /// Destroys the instance of `ppRenderTarget`.
   void destroy() {
+    checkMounted();
     handleUdError(_udRenderTarget_Destroy(_renderTarget));
+    this.dispose();
   }
 
   /// Set a memory buffers that a render target will write to.
   void setTargets([int colorClearValue = 0]) {
+    checkMounted();
     final pColorBuffer = _colorBuffer.cast<Void>();
     final pDepthBuffer = _depthBuffer.cast<Void>();
     handleUdError(_udRenderTarget_SetTargets(
@@ -70,6 +78,7 @@ class UdRenderTarget extends UdSDKClass {
   /// Set a memory buffers that a render target will write to (with pitch).
   void setTargetsWithPitch(int colorPitchInBytes, int depthPitchInBytes,
       [int colorClearValue = 0]) {
+    checkMounted();
     final pColorBuffer = _colorBuffer.cast<Void>();
     final pDepthBuffer = _depthBuffer.cast<Void>();
     handleUdError(_udRenderTarget_SetTargetsWithPitch(
@@ -83,6 +92,7 @@ class UdRenderTarget extends UdSDKClass {
 
   /// Get the matrix associated with `pRenderTarget` of type `matrixType` and fill it in `cameraMatrix`.
   List<double> getMatrix(udRenderTargetMatrix matrixType) {
+    checkMounted();
     Pointer<Double> cameraMatrix = allocate(count: 16);
     try {
       handleUdError(_udRenderTarget_GetMatrix(
@@ -97,6 +107,7 @@ class UdRenderTarget extends UdSDKClass {
 
   // Set the matrix associated with `pRenderTarget` of type `matrixType` and get it from `cameraMatrix`.
   void setMatrix(udRenderTargetMatrix matrixType, List<double> cameraMatrix) {
+    checkMounted();
     if (cameraMatrix.length != 16)
       throw new FormatException("cameraMatrix length must be 16");
 
@@ -112,10 +123,22 @@ class UdRenderTarget extends UdSDKClass {
     }
   }
 
-  void cleanup() {
+  void dispose() {
+    checkMounted();
     free(_renderTarget);
     free(_colorBuffer);
     free(_depthBuffer);
+    super.dispose();
+  }
+
+  void _nullChecks() {
+    assert(_renderTarget != nullptr);
+    assert(_colorBuffer != nullptr);
+    assert(_colorBuffer[0] != null);
+    assert(_colorBuffer[_bufferLength] != null);
+    assert(_depthBuffer != nullptr);
+    assert(_depthBuffer[0] != null);
+    assert(_depthBuffer[_bufferLength] != null);
   }
 }
 

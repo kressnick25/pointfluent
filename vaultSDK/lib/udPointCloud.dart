@@ -13,7 +13,47 @@ class UdPointCloud extends UdSDKClass {
   UdPointCloud() {
     this._pointCloud = allocate();
     this.header = udPointCloudHeader.allocate();
+    _nullChecks();
+    setMounted();
+  }
 
+  int get address {
+    checkMounted();
+    this._pointCloud[0];
+  }
+
+  void load(UdContext udContext, String modelLocation) {
+    checkMounted();
+    final pModelLocation = Utf8.toUtf8(modelLocation);
+    final err = _udPointCloud_Load(udContext.address, this._pointCloud,
+        pModelLocation, this.header.addressOf);
+    free(pModelLocation);
+
+    handleUdError(err);
+  }
+
+  void unLoad() {
+    checkMounted();
+    handleUdError(_udPointCloud_Unload(this._pointCloud));
+  }
+
+  void getHeader(UdContext udContext) {
+    checkMounted();
+    handleUdError(
+        _udPointCloud_GetHeader(udContext.address, this.header.addressOf));
+  }
+
+  //udError getMetaData() {}
+
+  void dispose() {
+    checkMounted();
+    free(this._pointCloud);
+    free(this.header.attributes[0].pDescriptors);
+    free(this.header.addressOf);
+    super.dispose();
+  }
+
+  void _nullChecks() {
     assert(_pointCloud.cast() != nullptr);
     assert(header.attributes.cast() != nullptr);
     assert(header.scaledRange != null);
@@ -25,34 +65,6 @@ class UdPointCloud extends UdSDKClass {
     assert(header.boundingBoxCenter != null);
     assert(header.boundingBoxExtents != null);
     assert(header.pivot != null);
-  }
-
-  int get address => this._pointCloud[0];
-
-  void load(UdContext udContext, String modelLocation) {
-    final pModelLocation = Utf8.toUtf8(modelLocation);
-    final err = _udPointCloud_Load(udContext.address, this._pointCloud,
-        pModelLocation, this.header.addressOf);
-    free(pModelLocation);
-
-    handleUdError(err);
-  }
-
-  void unLoad() {
-    handleUdError(_udPointCloud_Unload(this._pointCloud));
-  }
-
-  void getHeader(UdContext udContext) {
-    handleUdError(
-        _udPointCloud_GetHeader(udContext.address, this.header.addressOf));
-  }
-
-  //udError getMetaData() {}
-
-  void cleanup() {
-    free(this._pointCloud);
-    free(this.header.attributes[0].pDescriptors);
-    free(this.header.addressOf);
   }
 }
 

@@ -8,18 +8,14 @@ class UdAttributeSet extends UdSDKClass {
   udAttributeSet _attributeSet;
   UdAttributeSet() {
     this._attributeSet = udAttributeSet.allocate();
-    assert(_attributeSet.allocated != null);
-    assert(_attributeSet.content != null);
-    assert(_attributeSet.count != null);
-
-    assert(_attributeSet.pDescriptors != nullptr);
-    assert(_attributeSet.pDescriptors[0].typeInfo != null);
-    assert(_attributeSet.pDescriptors[0].blendType != null);
-    assert(_attributeSet.pDescriptors[0].name[0] != null);
-    assert(_attributeSet.pDescriptors[0].name[63] != null);
+    _nullChecks();
+    setMounted();
   }
 
-  Pointer<udAttributeSet> get address => _attributeSet.addressOf;
+  Pointer<udAttributeSet> get address {
+    checkMounted();
+    return _attributeSet.addressOf;
+  }
 
   /// Creates a udAttributeSet
   ///
@@ -30,6 +26,7 @@ class UdAttributeSet extends UdSDKClass {
   /// @note The application should call udAttributeSet_Free with pAttributeSet to destroy the object once it's no longer needed.
   ///
   void create(int udStdContent, int additionalCustomAttributes) {
+    checkMounted();
     handleUdError(_udAttributeSet_Create(
         this.address, udStdContent, additionalCustomAttributes));
   }
@@ -39,13 +36,16 @@ class UdAttributeSet extends UdSDKClass {
   /// @param pAttributeSet The attribute set to free the resources of
   /// @return A udError value based on the result of the destruction of the attribute set.
   void destroy() {
+    checkMounted();
     handleUdError(_udAttributeSet_Destroy(this.address));
+    this.dispose();
   }
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
   ///
   /// `attribute` must be a value of the enum `udStdAttribute`
   int getOffsetOfStandardAttribute(int attribute) {
+    checkMounted();
     final Pointer<Uint32> pOffset = allocate();
     try {
       handleUdError(_udAttributeSet_GetOffsetOfStandardAttribute(
@@ -60,6 +60,7 @@ class UdAttributeSet extends UdSDKClass {
 
   /// Gets the offset for a standard attribute so that further querying of that attribute can be performed
   int getOffsetOfNamedAttribute(String name) {
+    checkMounted();
     final Pointer<Uint32> pOffset = allocate();
     final pName = Utf8.toUtf8(name);
     try {
@@ -74,9 +75,23 @@ class UdAttributeSet extends UdSDKClass {
     }
   }
 
-  void cleanup() {
+  void dispose() {
+    checkMounted();
     free(_attributeSet.pDescriptors);
     free(_attributeSet.addressOf);
+    super.dispose();
+  }
+
+  void _nullChecks() {
+    assert(_attributeSet.allocated != null);
+    assert(_attributeSet.content != null);
+    assert(_attributeSet.count != null);
+
+    assert(_attributeSet.pDescriptors != nullptr);
+    assert(_attributeSet.pDescriptors[0].typeInfo != null);
+    assert(_attributeSet.pDescriptors[0].blendType != null);
+    assert(_attributeSet.pDescriptors[0].name[0] != null);
+    assert(_attributeSet.pDescriptors[0].name[63] != null);
   }
 }
 
