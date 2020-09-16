@@ -83,8 +83,8 @@ class BMP332Header {
 void main() {
   final width = 640;
   final height = 480;
-  final username = "kressnick25@gmail.com";
-  final password = "Gizzhead12";
+  final username = ""; // INSERT
+  final password = ""; // INSERT
   final modelName = "https://models.euclideon.com/DirCube.uds";
 
   final udContext = UdContext();
