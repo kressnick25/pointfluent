@@ -111,7 +111,7 @@ void main() {
   renderContext.renderSettings.flags =
       udRenderContextFlags.udRCF_BlockingStreaming;
 
-  renderContext.render(renderTarget, 1);
+  renderContext.render(renderTarget, modelCount: 1);
 
   // add a windows BMP header to the bytes
   Uint8List colorBuffer = Uint8List.fromList(renderTarget.colorBuffer);

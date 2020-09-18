@@ -43,7 +43,7 @@ class UdRenderContext extends UdSDKClass {
   }
 
   /// Render the models from the persepective of `pRenderView`
-  void render(UdRenderTarget renderTarget, int modelCount) {
+  void render(UdRenderTarget renderTarget, {int modelCount = 1}) {
     checkMounted();
     assert(this.address != null);
     assert(renderTarget.address != null);
