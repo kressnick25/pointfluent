@@ -97,7 +97,7 @@ void main() {
 
   renderContext.create(udContext);
 
-  renderTarget.create(udContext, renderContext, width, height);
+  renderTarget.create(udContext, renderContext);
 
   pointCloud.load(udContext, modelName);
   renderContext.renderInstance.pPointCloud =
