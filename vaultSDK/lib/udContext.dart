@@ -9,13 +9,18 @@ class UdContext extends UdSDKClass {
 
   UdContext() {
     this._context = allocate();
+    setMounted();
   }
 
-  get address => this._context;
+  int get address {
+    checkMounted();
+    return this._context[0];
+  }
 
   // Call these functions in flutter widgets
   void connect(email, password,
       [url = 'https://udstream.euclideon.com', appName = 'Pointfluent']) {
+    checkMounted();
     final uUrl = Utf8.toUtf8(url);
     final uAppName = Utf8.toUtf8(appName);
     final uEmail = Utf8.toUtf8(email);
@@ -35,14 +40,16 @@ class UdContext extends UdSDKClass {
   ///
   /// endSession ends the session entirely and cannot be resumed
   void disconnect({bool endSession = true}) {
+    checkMounted();
     int endSessionVal = endSession ? 1 : 0;
     handleUdError(udContext_Disconnect(this._context, endSessionVal));
 
-    this._cleanup();
+    this.dispose();
   }
 
-  void _cleanup() {
+  void dispose() {
     free(this._context);
+    super.dispose();
   }
 }
 

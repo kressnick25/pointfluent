@@ -1,18 +1,8 @@
 import 'dart:ffi';
 
 import 'udSdkLib.dart';
-import 'udError.dart';
 
 class UdConfig extends UdSDKClass {
-  // static const MethodChannel _channel = const MethodChannel('udContext');
-
-  // static Future<String> get platformVersion async {
-  //   final String version = await _channel.invokeMethod('getPlatformVersion');
-  //   return version;
-  // }
-
-  // Call these functions in flutter widgets
-
   // Allows VDK to connect to server with an unrecognized certificate authority, sometimes required for self-signed certificates or poorly configured proxies.
   // Used for workaround where calling UdContext.connect will always return vE_SecurityFailure
   static void ignoreCertificateVerification(bool ignore) {

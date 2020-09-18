@@ -1,10 +1,5 @@
-import 'dart:ffi';
-
-import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:vaultSDK/udContext.dart';
-import 'package:vaultSDK/udError.dart';
-import 'package:flutter/foundation.dart';
 
 import 'auth/login.dart';
 import 'auth/home.dart';

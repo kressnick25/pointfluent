@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+
 abstract class ArrayHelper {
   final struct;
   final List<int> dimensions;
@@ -30,4 +33,11 @@ abstract class ArrayHelper {
   dynamic operator [](int index) {}
 
   void operator []=(int index, dynamic value) {}
+}
+
+/// Allocates a Pointer<Double> and copies in the contents of a dart List
+Pointer<Double> doubleListToCArray(List<double> list) {
+  Pointer<Double> cArray = allocate(count: list.length);
+  cArray.asTypedList(list.length).setAll(0, list);
+  return cArray;
 }

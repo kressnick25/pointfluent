@@ -1,4 +1,5 @@
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
 
 import 'udSdkLib.dart';
@@ -13,9 +14,18 @@ class UdPointCloud extends UdSDKClass {
   UdPointCloud() {
     this._pointCloud = allocate();
     this.header = udPointCloudHeader.allocate();
+    _nullChecks();
+    setMounted();
   }
 
+  int get address {
+    checkMounted();
+    return this._pointCloud[0];
+  }
+
+  /// Load a udPointCloud from `modelLocation` path.
   void load(UdContext udContext, String modelLocation) {
+    checkMounted();
     final pModelLocation = Utf8.toUtf8(modelLocation);
     final err = _udPointCloud_Load(udContext.address, this._pointCloud,
         pModelLocation, this.header.addressOf);
@@ -24,20 +34,39 @@ class UdPointCloud extends UdSDKClass {
     handleUdError(err);
   }
 
+  /// Destroys the udPointCloud.
   void unLoad() {
+    checkMounted();
     handleUdError(_udPointCloud_Unload(this._pointCloud));
   }
 
+  /// Update the udPointCloudHeader of this class
   void getHeader(UdContext udContext) {
+    checkMounted();
     handleUdError(
         _udPointCloud_GetHeader(udContext.address, this.header.addressOf));
   }
 
-  //udError getMetaData() {}
-
-  void cleanup() {
+  void dispose() {
+    checkMounted();
     free(this._pointCloud);
+    free(this.header.attributes[0].pDescriptors);
     free(this.header.addressOf);
+    super.dispose();
+  }
+
+  void _nullChecks() {
+    assert(_pointCloud.cast() != nullptr);
+    assert(header.attributes.cast() != nullptr);
+    assert(header.scaledRange != null);
+    assert(header.convertedResolution != null);
+    assert(header.totalLODLayers != null);
+    assert(header.unitMeterScale != null);
+    assert(header.storedMatrix != null);
+    assert(header.baseOffset != null);
+    assert(header.boundingBoxCenter != null);
+    assert(header.boundingBoxExtents != null);
+    assert(header.pivot != null);
   }
 }
 
@@ -45,6 +74,8 @@ class UdPointCloud extends UdSDKClass {
 ///
 /// Can just use IntPtr instead
 class udPointCloud extends Struct {}
+
+class udQueryFilter extends Struct {}
 
 class udVoxelID extends Struct {
   @Uint64()
@@ -54,12 +85,9 @@ class udVoxelID extends Struct {
 
   Pointer<Void> pRenderInfo; //!< Internal render info
 
-  factory udVoxelID.allocate(
-          int index, Pointer<Void> pTrav, Pointer<void> pRenderInfo) =>
-      allocate<udVoxelID>().ref
-        ..index = index
-        ..pTrav = pTrav
-        ..pRenderInfo = pRenderInfo;
+  factory udVoxelID.allocate() => allocate<udVoxelID>().ref
+    ..pTrav = allocate()
+    ..pRenderInfo = allocate();
 }
 
 /// Stores basic information about a `udPointCloud`
@@ -145,55 +173,7 @@ class udPointCloudHeader extends Struct {
   // Nested struct workaround as here:
   // https://github.com/dart-lang/sdk/blob/master/samples/ffi/coordinate.dart#L18-L19
   factory udPointCloudHeader.allocate() => allocate<udPointCloudHeader>().ref
-    ..attributes = allocate<udAttributeSet>();
-
-  // factory udPointCloudHeader.allocate({
-  //   double scaledRange,
-  //   double unitMeterScale,
-  //   int totalLODLayers,
-  //   double convertedResolution,
-  //   Pointer<udAttributeSet> attributes,
-  //   List<double> storedMatrix,
-  //   List<double> baseOffset,
-  //   List<double> pivot,
-  //   List<double> boundingBoxCenter,
-  //   List<double> boudingBoxExtents,
-  // }) {
-  //   return allocate<udPointCloudHeader>().ref
-  //     ..scaledRange = scaledRange
-  //     ..unitMeterScale = unitMeterScale
-  //     ..totalLODLayers = totalLODLayers
-  //     ..convertedResolution = convertedResolution
-  //     ..attributes
-  //     .._baseOffset_0 = baseOffset[0]
-  //     .._baseOffset_1 = baseOffset[1]
-  //     .._baseOffset_2 = baseOffset[2]
-  //     .._pivot_0 = pivot[0]
-  //     .._pivot_1 = pivot[1]
-  //     .._pivot_2 = pivot[2]
-  //     .._boundingBoxCenter_0 = boundingBoxCenter[0]
-  //     .._boundingBoxCenter_1 = boundingBoxCenter[1]
-  //     .._boundingBoxCenter_2 = boundingBoxCenter[2]
-  //     .._boundingBoxExtents_0 = boundingBoxCenter[0]
-  //     .._boundingBoxExtents_1 = boundingBoxCenter[1]
-  //     .._boundingBoxExtents_2 = boundingBoxCenter[2]
-  //     .._storedMatrix_1 = 0
-  //     .._storedMatrix_1 = storedMatrix[1]
-  //     .._storedMatrix_2 = storedMatrix[2]
-  //     .._storedMatrix_3 = storedMatrix[3]
-  //     .._storedMatrix_4 = storedMatrix[4]
-  //     .._storedMatrix_5 = storedMatrix[5]
-  //     .._storedMatrix_6 = storedMatrix[6]
-  //     .._storedMatrix_7 = storedMatrix[7]
-  //     .._storedMatrix_8 = storedMatrix[8]
-  //     .._storedMatrix_9 = storedMatrix[9]
-  //     .._storedMatrix_10 = storedMatrix[10]
-  //     .._storedMatrix_11 = storedMatrix[11]
-  //     .._storedMatrix_12 = storedMatrix[12]
-  //     .._storedMatrix_13 = storedMatrix[13]
-  //     .._storedMatrix_14 = storedMatrix[14]
-  //     .._storedMatrix_15 = storedMatrix[15];
-  // }
+    ..attributes = udAttributeSet.allocate().addressOf;
 
   get storedMatrix =>
       _ArrayHelper_udPointCloudHeader_storedMatrix(this, [3], 0, 0);
@@ -476,9 +456,9 @@ class _ArrayHelper_udPointCloudHeader_boundingBoxExtents extends ArrayHelper {
 //! @note The application should call **udPointCloud_Unload** with `ppModel` to destroy the object once it's no longer needed.
 //!
 typedef _udPointCloud_Load_native = Int32 Function(
-    Pointer, Pointer<IntPtr>, Pointer<Utf8>, Pointer);
+    IntPtr, Pointer<IntPtr>, Pointer<Utf8>, Pointer<Struct>);
 typedef _udPointCloud_Load_dart = int Function(
-    Pointer, Pointer<IntPtr>, Pointer<Utf8>, Pointer<udPointCloudHeader>);
+    int, Pointer<IntPtr>, Pointer<Utf8>, Pointer<udPointCloudHeader>);
 final _udPointCloud_LoadPointer = udSdkLib
     .lookup<NativeFunction<_udPointCloud_Load_native>>('udPointCloud_Load');
 final _udPointCloud_Load =
@@ -508,9 +488,10 @@ final _udPointCloud_Unload =
 //! @return A udError value based on the result of getting the model header.
 //! @note All Unlimited Detail models are assumed to be from { 0, 0, 0 } to { 1, 1, 1 }. Any scaling applied to the model will be in this matrix along with the translation and rotation.
 //!
-typedef _udPointCloud_GetHeader_native = Int32 Function(Pointer, Pointer);
+typedef _udPointCloud_GetHeader_native = Int32 Function(
+    IntPtr, Pointer<Struct>);
 typedef _udPointCloud_GetHeader_dart = int Function(
-    Pointer, Pointer<udPointCloudHeader>);
+    int, Pointer<udPointCloudHeader>);
 final _udPointCloud_GetHeaderPointer =
     udSdkLib.lookup<NativeFunction<_udPointCloud_GetHeader_native>>(
         'udPointCloud_GetHeader');
