@@ -100,8 +100,7 @@ void main() {
   renderTarget.create(udContext, renderContext);
 
   pointCloud.load(udContext, modelName);
-  renderContext.renderInstance.pPointCloud =
-      Pointer.fromAddress(pointCloud.address);
+  renderContext.setRenderInstancePointCloud(pointCloud);
 
   renderContext.renderInstance.setMatrix(cameraMatrix);
 

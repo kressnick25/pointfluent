@@ -29,6 +29,10 @@ class UdRenderContext extends UdSDKClass {
     return this._renderContext[0];
   }
 
+  void setRenderInstancePointCloud(UdPointCloud pointCloud) {
+    this.renderInstance.pPointCloud = Pointer.fromAddress(pointCloud.address);
+  }
+
   /// Create an instance of `udRenderContext` for rendering
   void create(UdContext udContext) {
     checkMounted();
