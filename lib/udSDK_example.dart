@@ -89,7 +89,7 @@ void main() {
 
   final udContext = UdContext();
   final renderContext = UdRenderContext();
-  final renderTarget = UdRenderTarget(width * height);
+  final renderTarget = UdRenderTarget(width, height);
   final pointCloud = UdPointCloud();
 
   UdConfig.ignoreCertificateVerification(true);

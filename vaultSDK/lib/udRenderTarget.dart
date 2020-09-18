@@ -14,10 +14,13 @@ class UdRenderTarget extends UdSDKClass {
   Pointer<IntPtr> _renderTarget;
   Pointer<Int64> _colorBuffer;
   Pointer<Float> _depthBuffer;
+  final int width;
+  final int height;
   final int _bufferLength;
 
-  UdRenderTarget(this._bufferLength) {
-    this._renderTarget = allocate();
+  UdRenderTarget(this.width, this.height)
+      : this._bufferLength = width * height {
+    this._renderTarget = allocate(count: _bufferLength);
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
 
@@ -40,9 +43,8 @@ class UdRenderTarget extends UdSDKClass {
     return this._depthBuffer.asTypedList(_bufferLength);
   }
 
-  /// Create a udRenderTarget with a viewport using `width` and `height`.
-  void create(UdContext udContext, UdRenderContext renderContext, int width,
-      int height) {
+  /// Create a udRenderTarget with a viewport
+  void create(UdContext udContext, UdRenderContext renderContext) {
     checkMounted();
     final ppRenderTarget =
         Pointer.fromAddress(_renderTarget.address).cast<IntPtr>();
@@ -50,8 +52,8 @@ class UdRenderTarget extends UdSDKClass {
       udContext.address,
       ppRenderTarget,
       renderContext.address,
-      width,
-      height,
+      this.width,
+      this.height,
     ));
   }
 
