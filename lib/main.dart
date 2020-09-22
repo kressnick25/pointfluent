@@ -4,6 +4,7 @@ import 'package:vaultSDK/udContext.dart';
 import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
+import 'auth/SceneViewer.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
                 udContext: udContext,
               ),
           HomePage.routeName: (context) => HomePage(
+                udContext: udContext,
+              ),
+          SceneViewerPage.routeName: (context) => SceneViewerPage(
                 udContext: udContext,
               ),
           SettingsPage.routeName: (context) => SettingsPage(),

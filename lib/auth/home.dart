@@ -10,13 +10,13 @@ import 'package:vaultSDK/udPointCloud.dart';
 import 'package:vaultSDK/udContext.dart';
 
 import '../widgets/ErrorMsg.dart';
+import '../auth/SceneViewer.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.udContext}) : super(key: key);
   static const routeName = '/home';
 
   final UdContext udContext;
-  final pointCloud = UdPointCloud();
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -30,15 +30,11 @@ class _HomePageState extends State<HomePage> {
     // Currently doing this on Android limits the selection to photos for some reason
     // getFilePath(type: FileType.custom, allowedExtensions: ['uds']);
 
-    try {
-      widget.pointCloud.load(widget.udContext, filePath);
-      setState(() => _error.message = null);
-    } catch (err) {
-      setState(() {
-        _error.message = err.toString();
-        _error.showAlertDialog(context);
-      });
-    }
+    Navigator.pushNamed(
+      context,
+      SceneViewerPage.routeName,
+      arguments: SceneViewerArgs(filePath),
+    );
   }
 
   @override
