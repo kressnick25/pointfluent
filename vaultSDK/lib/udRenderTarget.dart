@@ -12,7 +12,7 @@ const int _cameraMatrixLength = 16;
 
 class UdRenderTarget extends UdSDKClass {
   Pointer<IntPtr> _renderTarget;
-  Pointer<Int64> _colorBuffer;
+  Pointer<Int32> _colorBuffer;
   Pointer<Float> _depthBuffer;
   final int width;
   final int height;
@@ -20,7 +20,7 @@ class UdRenderTarget extends UdSDKClass {
 
   UdRenderTarget(this.width, this.height)
       : this._bufferLength = width * height {
-    this._renderTarget = allocate(count: _bufferLength);
+    this._renderTarget = allocate();
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
 
@@ -33,7 +33,7 @@ class UdRenderTarget extends UdSDKClass {
     return this._renderTarget[0];
   }
 
-  Int64List get colorBuffer {
+  Int32List get colorBuffer {
     checkMounted();
     return this._colorBuffer.asTypedList(_bufferLength);
   }
