@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: customColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           backgroundColor: Colors.white,
+          scaffoldBackgroundColor: Color(0xfff8f8f8), // background color for menu
           fontFamily: 'Roboto',
         ),
         initialRoute: '/',
