@@ -69,14 +69,14 @@ class Bitmap {
   }
 
   Uint8List buildHeaded() {
-    final header = RGBA32BitmapHeader(size, width, height)
+    final header = BGRA32BitmapHeader(size, width, height)
       ..applyContent(content);
     return header.headerIntList;
   }
 }
 
-class RGBA32BitmapHeader {
-  RGBA32BitmapHeader(this.contentSize, int width, int height) {
+class BGRA32BitmapHeader {
+  BGRA32BitmapHeader(this.contentSize, int width, int height) {
     headerIntList = Uint8List(fileLength);
 
     final ByteData bd = headerIntList.buffer.asByteData();
