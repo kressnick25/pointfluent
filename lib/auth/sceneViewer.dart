@@ -78,6 +78,8 @@ class SceneViewer extends StatefulWidget {
     renderContext.renderInstance.setMatrix(defaultCameraMatrix);
 
     renderTarget.setTargets();
+    renderTarget.setMatrix(
+        udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);
   }
 
   @override

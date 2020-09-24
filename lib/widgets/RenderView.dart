@@ -19,7 +19,6 @@ class RenderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, cameraMatrix);
     renderContext.render(renderTarget);
 
     return Container(
