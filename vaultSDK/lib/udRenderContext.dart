@@ -244,6 +244,7 @@ class udRenderInstance extends Struct {
   void setMatrix(List<double> values) {
     for (int i = 0; i < 16; i++) {
       storedMatrix[i] = values[i];
+      assert(storedMatrix[i] != null);
     }
   }
 

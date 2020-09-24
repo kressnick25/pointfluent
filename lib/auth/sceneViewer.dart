@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:Pointfluent/widgets/ErrorMsg.dart';
@@ -38,6 +39,7 @@ class SceneViewerPage extends StatelessWidget {
       child: SceneViewer(
         udContext,
         args.modelLocation,
+        dimensions: Size(640, 480),
       ),
     );
   }
@@ -62,20 +64,19 @@ class SceneViewer extends StatefulWidget {
   /// Create a SceneViewer as well as a renderContext, renderTarget and load a pointCloud
   SceneViewer(this.udContext, this.modelLocation, {Size dimensions})
       // Set these properties as they are final
-      : this.renderSize = dimensions ??
-            Size(window.physicalSize.width.toInt(),
-                window.physicalSize.height.toInt()),
+      : this.renderSize = dimensions,
         this.pointCloud = UdPointCloud(),
         this.renderContext = UdRenderContext(),
-        this.renderTarget = UdRenderTarget(
-            dimensions?.width ?? window.physicalSize.width.toInt(),
-            dimensions?.height ?? window.physicalSize.height.toInt()) {
+        this.renderTarget =
+            UdRenderTarget(dimensions.width, dimensions.height) {
     renderContext.create(udContext);
     renderTarget.create(udContext, renderContext);
     // Load point cloud
     pointCloud.load(udContext, modelLocation);
     // finish setting up render context
     renderContext.setRenderInstancePointCloud(pointCloud);
+    renderContext.renderInstance.setMatrix(defaultCameraMatrix);
+
     renderTarget.setTargets();
   }
 
