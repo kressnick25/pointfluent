@@ -31,12 +31,13 @@ class SceneViewerPage extends StatelessWidget {
     if (!_isUdsFileType(args.modelLocation))
       throw new FormatException(
           "File type provided to SceneViewer was not a .uds model.");
+    final screenSize = MediaQuery.of(context).size;
 
     return Container(
       child: SceneViewer(
         udManager,
         args.modelLocation,
-        Size(640, 480),
+        Size(screenSize.height.toInt(), screenSize.width.toInt()),
       ),
     );
   }

@@ -32,7 +32,7 @@ class _RenderViewState extends State<RenderView> {
       future: _colorBuffer,
       builder: (BuildContext context, AsyncSnapshot<ByteBuffer> snapshot) {
         if (snapshot.hasData) {
-          return BitmapImage(widget.size, snapshot.data);
+          return BitmapImage(widget.size, snapshot.data, quarterRotations: 1);
         } else if (snapshot.hasError) {
           return Text("Error");
         } else {
