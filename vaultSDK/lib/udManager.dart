@@ -10,6 +10,7 @@ import 'package:vaultSDK/udRenderTarget.dart';
 import 'package:vaultSDK/udSdkLib.dart';
 import 'package:vaultSDK/udConfig.dart';
 
+/// Internal synchronous version of UdManager, managed by Isolate
 class _UdManager extends UdSDKClass {
   final UdContext udContext;
   final UdPointCloud pointCloud;
@@ -40,7 +41,8 @@ class _UdManager extends UdSDKClass {
     this.renderTarget = UdRenderTarget(width, height);
     renderTarget.create(udContext, renderContext);
     renderContext.setRenderInstancePointCloud(pointCloud);
-    renderTarget.setTargets(colorClearValue: 0xFFFF00FF);
+    renderContext.renderInstance.setMatrix(defaultCameraMatrix);
+    renderTarget.setTargets(colorClearValue: 0);
     renderTarget.setMatrix(
         udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);
 

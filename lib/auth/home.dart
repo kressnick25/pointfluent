@@ -6,17 +6,13 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:vaultSDK/udPointCloud.dart';
-import 'package:vaultSDK/udContext.dart';
-
 import '../widgets/ErrorMsg.dart';
 import '../auth/SceneViewer.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.udContext}) : super(key: key);
+  HomePage({Key key}) : super(key: key);
   static const routeName = '/home';
 
-  final UdContext udContext;
   @override
   _HomePageState createState() => _HomePageState();
 }

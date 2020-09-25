@@ -3,10 +3,7 @@ import 'dart:ui';
 
 import 'package:Pointfluent/widgets/ErrorMsg.dart';
 import 'package:flutter/material.dart';
-import 'package:vaultSDK/udContext.dart';
-import 'package:vaultSDK/udPointCloud.dart';
-import 'package:vaultSDK/udRenderContext.dart';
-import 'package:vaultSDK/udRenderTarget.dart';
+import 'package:vaultSDK/udManager.dart';
 
 import '../widgets/RenderView.dart';
 import '../util/Size.dart';
@@ -14,9 +11,9 @@ import '../util/Size.dart';
 // Parent widget is needed to get the model location from the navigator in the build function.
 class SceneViewerPage extends StatelessWidget {
   static const routeName = "/sceneViewer";
-  final UdContext udContext;
+  final UdManager udManager;
 
-  const SceneViewerPage({this.udContext});
+  const SceneViewerPage({this.udManager});
 
   bool _isUdsFileType(String filePath) {
     final fileExtension = filePath.substring(filePath.length - 4);
@@ -37,9 +34,9 @@ class SceneViewerPage extends StatelessWidget {
 
     return Container(
       child: SceneViewer(
-        udContext,
+        udManager,
         args.modelLocation,
-        dimensions: Size(640, 480),
+        Size(640, 480),
       ),
     );
   }
@@ -47,11 +44,8 @@ class SceneViewerPage extends StatelessWidget {
 
 /// View a pointCloud using udSDK in a window of set dimension size
 class SceneViewer extends StatefulWidget {
-  final UdContext udContext;
-  final UdPointCloud pointCloud;
-  final UdRenderContext renderContext;
-  final UdRenderTarget renderTarget;
-  final Size renderSize;
+  final UdManager udManager;
+  final Size dimensions;
   final String modelLocation;
 
   static const List<double> defaultCameraMatrix = [
@@ -62,25 +56,7 @@ class SceneViewer extends StatefulWidget {
   ];
 
   /// Create a SceneViewer as well as a renderContext, renderTarget and load a pointCloud
-  SceneViewer(this.udContext, this.modelLocation, {Size dimensions})
-      // Set these properties as they are final
-      : this.renderSize = dimensions,
-        this.pointCloud = UdPointCloud(),
-        this.renderContext = UdRenderContext(),
-        this.renderTarget =
-            UdRenderTarget(dimensions.width, dimensions.height) {
-    renderContext.create(udContext);
-    renderTarget.create(udContext, renderContext);
-    // Load point cloud
-    pointCloud.load(udContext, modelLocation);
-    // finish setting up render context
-    renderContext.setRenderInstancePointCloud(pointCloud);
-    renderContext.renderInstance.setMatrix(defaultCameraMatrix);
-
-    renderTarget.setTargets();
-    renderTarget.setMatrix(
-        udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);
-  }
+  SceneViewer(this.udManager, this.modelLocation, this.dimensions);
 
   @override
   _SceneViewerState createState() => _SceneViewerState();
@@ -90,26 +66,44 @@ class SceneViewer extends StatefulWidget {
 // camera matrix it will trigger a widget re-render
 class _SceneViewerState extends State<SceneViewer> {
   List<double> cameraMatrix;
-
+  Future<bool> init;
   @override
   void initState() {
     super.initState();
     cameraMatrix = SceneViewer.defaultCameraMatrix;
+    init = _initRender(widget.modelLocation, widget.dimensions);
+  }
+
+  Future<bool> _initRender(String modelLocation, Size dimensions) async {
+    await widget.udManager.loadModel(modelLocation);
+    await widget.udManager.renderInit(dimensions.width, dimensions.height);
+    return true;
   }
 
   /// Free the memory allocated to udSDK objects when this widget unmounts
   @override
   void dispose() {
-    widget.pointCloud.unLoad();
-    widget.renderTarget.destroy();
-    widget.renderContext.destroy();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RenderView(widget.renderContext, widget.renderTarget, cameraMatrix,
-        widget.renderSize);
+    return Scaffold(
+      body: Center(
+        child: FutureBuilder(
+          future: init,
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData) {
+              return RenderView(widget.udManager, widget.dimensions);
+            } else if (snapshot.hasError) {
+              return Text("Error");
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    );
   }
 }
 
