@@ -95,50 +95,57 @@ abstract class ManagerFns {
     return allFns.contains(functionName);
   }
 
-  static dynamic doFunction(
+  static Response handleError(callback) {
+    try {
+      final data =
+          callback(); // this may be null if callback does not return anything
+      return Response(data: data);
+    } catch (err) {
+      return Response(error: err);
+    }
+  }
+
+  static Response doFunction(
       _UdManager manager, String functionName, List<dynamic> params) {
-    const defaultResponse = "done";
     switch (functionName) {
       case login:
         {
-          manager.login(params[0], params[1]);
-          return defaultResponse;
+          return handleError(() => manager.login(params[0], params[1]));
         }
         break;
       case loadModel:
         {
-          manager.loadModel(params[0]);
-          return defaultResponse;
+          return handleError(() => manager.loadModel(params[0]));
         }
         break;
       case renderInit:
         {
-          manager.renderInit(params[0], params[1]);
-          return defaultResponse;
+          return handleError(() => manager.renderInit(params[0], params[1]));
         }
         break;
       case ignoreCert:
         {
-          manager.setIgnoreCertificate(params[0]);
-          return defaultResponse;
+          return handleError(() => manager.setIgnoreCertificate(params[0]));
         }
         break;
       case render:
         {
-          manager.render();
-          return manager
-              .colorBuffer; // TODO copy to new array or use TransferableByteData
+          return handleError(() {
+            manager.render();
+            return manager
+                .colorBuffer; // TODO copy to new array or use TransferableByteData
+          });
         }
         break;
       case dispose:
         {
-          manager.dispose();
-          return defaultResponse;
+          return handleError(() => manager.dispose());
         }
         break;
       default:
         {
-          return "Error";
+          return Response(
+              error: Exception("Invalid function call passed to udManager"));
         }
         break;
     }
@@ -164,6 +171,16 @@ class Message {
   Message(this.function, this.replyPort, {this.close = false});
 }
 
+class Response {
+  final Exception error;
+  final dynamic data;
+
+  Response({this.error, this.data});
+
+  bool get ok => error == null;
+  bool get hasData => data != null;
+}
+
 class UdManager extends UdSDKClass {
   // long-lived port for receiving messages
   ReceivePort _mainRPort;
@@ -176,14 +193,17 @@ class UdManager extends UdSDKClass {
     _echoPort = await _mainRPort.first;
   }
 
-  Future<void> _sendFunction(ExecutableFunction fn) async {
+  Future<dynamic> _sendFunction(ExecutableFunction fn) async {
     // Setup a new receivePort as these can only be used once
     final rPort = ReceivePort();
     // send a message to the Isolate and get the response
     _echoPort.send(Message(fn, rPort.sendPort));
-    await rPort.first;
+    Response response = await rPort.first;
     // must call rPort.close() once not in use otherwise will remain open/ leak memory
     rPort.close();
+
+    if (!response.ok) throw response.error;
+    if (response.hasData) return response.data;
   }
 
   Future<void> login(String email, String password) async {
@@ -210,17 +230,7 @@ class UdManager extends UdSDKClass {
   }
 
   Future<ByteBuffer> render() async {
-    final rPort = ReceivePort();
-    _echoPort.send(
-        Message(ExecutableFunction(ManagerFns.render, []), rPort.sendPort));
-    final colorBuffer = await rPort.first;
-    rPort.close();
-    if (colorBuffer is ByteBuffer) {
-      return colorBuffer;
-    } else {
-      throw new FormatException(
-          "Type returned from IsolateRender was not of expected type");
-    }
+    return await _sendFunction(ExecutableFunction(ManagerFns.render, []));
   }
 
   Future<void> cleanup() async {
