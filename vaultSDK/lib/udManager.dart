@@ -62,6 +62,10 @@ class _UdManager extends UdSDKClass {
     UdConfig.ignoreCertificateVerification(val);
   }
 
+  void test() {
+    Function.apply(this.render, []);
+  }
+
   @override
   void dispose() {
     pointCloud.unLoad();
@@ -74,6 +78,7 @@ class _UdManager extends UdSDKClass {
   ByteBuffer get colorBuffer => this.renderTarget.colorBuffer.buffer;
 }
 
+/// Defines callable udManager methods and provides functions to invoke these
 abstract class ManagerFns {
   static const login = "login";
   static const loadModel = "loadModel";
@@ -95,7 +100,7 @@ abstract class ManagerFns {
     return allFns.contains(functionName);
   }
 
-  static Response handleError(callback) {
+  static Response handleError(Function callback) {
     try {
       final data =
           callback(); // this may be null if callback does not return anything
@@ -105,6 +110,10 @@ abstract class ManagerFns {
     }
   }
 
+  // Because we can only comunicate with static messages between isolates,
+  // we can't call an instance function from another Isolate.
+  // This workaround to handle call each function works for the small amount of
+  // function calls we need at the moment, may want another solution to scale
   static Response doFunction(
       _UdManager manager, String functionName, List<dynamic> params) {
     switch (functionName) {
@@ -152,6 +161,7 @@ abstract class ManagerFns {
   }
 }
 
+/// Describes a function to be executed in Isolate primitive types
 class ExecutableFunction {
   final String name;
   final List<dynamic> params;
@@ -163,6 +173,7 @@ class ExecutableFunction {
   }
 }
 
+/// A message to pass data/instructions from the main Isolate to the child Isolate
 class Message {
   final ExecutableFunction function;
   final SendPort replyPort;
@@ -171,6 +182,7 @@ class Message {
   Message(this.function, this.replyPort, {this.close = false});
 }
 
+/// The format of a response from the child Isolate
 class Response {
   final Exception error;
   final dynamic data;
@@ -181,6 +193,7 @@ class Response {
   bool get hasData => data != null;
 }
 
+/// Handles async udSDK functions in a seperate thread using Isolates
 class UdManager extends UdSDKClass {
   // long-lived port for receiving messages
   ReceivePort _mainRPort;
@@ -188,11 +201,13 @@ class UdManager extends UdSDKClass {
 
   UdManager() : this._mainRPort = ReceivePort();
 
+  /// spawn the child Isolate and get the sendPort
   Future setup() async {
-    await Isolate.spawn(_doIsolateWork, _mainRPort.sendPort);
+    await Isolate.spawn(_spawnIsolate, _mainRPort.sendPort);
     _echoPort = await _mainRPort.first;
   }
 
+  /// Send an `ExecutableFunction` to the child Isolate for execution and handle the `Response`
   Future<dynamic> _sendFunction(ExecutableFunction fn) async {
     // Setup a new receivePort as these can only be used once
     final rPort = ReceivePort();
@@ -206,33 +221,42 @@ class UdManager extends UdSDKClass {
     if (response.hasData) return response.data;
   }
 
+  /// Login to to udSDK
+  ///
+  /// Equivalent to `udContext_Connect`
   Future<void> login(String email, String password) async {
     await _sendFunction(
         ExecutableFunction(ManagerFns.login, [email, password]));
   }
 
+  /// Load a PointCloud from the location to a `.uds` file
   Future<void> loadModel(String modelLocation) async {
     await _sendFunction(
         ExecutableFunction(ManagerFns.loadModel, [modelLocation]));
   }
 
+  /// Setup udSDK objects before calling `render`
   Future<void> renderInit(int width, int height) async {
     await _sendFunction(
         ExecutableFunction(ManagerFns.renderInit, [width, height]));
   }
 
+  /// Update the camera matrix of this render object
   Future<void> updateCamera(List<double> newMatrix) async {
     throw new Exception("Not Implemented");
   }
 
+  /// Set udSDK config to ignore certificate security
   Future<void> setIgnoreCertificate(bool val) async {
     await _sendFunction(ExecutableFunction(ManagerFns.ignoreCert, [val]));
   }
 
+  /// Render the loaded model and return the resulting color buffer
   Future<ByteBuffer> render() async {
     return await _sendFunction(ExecutableFunction(ManagerFns.render, []));
   }
 
+  /// Free associated memory and close the child Isolate
   Future<void> cleanup() async {
     final rPort = ReceivePort();
     _echoPort.send(
@@ -244,7 +268,8 @@ class UdManager extends UdSDKClass {
     _echoPort.send(Message(null, null, close: true));
   }
 
-  static void _doIsolateWork(SendPort sPort) async {
+  /// Initialisation code run by child Isolate on setup
+  static void _spawnIsolate(SendPort sPort) async {
     // open receivePort to get work
     var isolateRPort = ReceivePort();
     _UdManager manager = _UdManager();
