@@ -176,7 +176,7 @@ class udPointCloudHeader extends Struct {
     ..attributes = udAttributeSet.allocate().addressOf;
 
   get storedMatrix =>
-      _ArrayHelper_udPointCloudHeader_storedMatrix(this, [3], 0, 0);
+      _ArrayHelper_udPointCloudHeader_storedMatrix(this, [16], 0, 0);
 
   get baseOffset => _ArrayHelper_udPointCloudHeader_baseOffset(this, [3], 0, 0);
 
