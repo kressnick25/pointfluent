@@ -41,7 +41,7 @@ class _UdManager extends UdSDKClass {
     this.renderTarget = UdRenderTarget(width, height);
     renderTarget.create(udContext, renderContext);
     renderContext.setRenderInstancePointCloud(pointCloud);
-    renderContext.renderInstance.setMatrix(pointCloud.header.storedMatrixList);
+    renderContext.renderInstance.setMatrix(pointCloud.header.storedMatrix);
     renderTarget.setTargets(colorClearValue: 0);
     renderTarget.setMatrix(
         udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);

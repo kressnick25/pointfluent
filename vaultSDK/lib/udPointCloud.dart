@@ -178,16 +178,16 @@ class udPointCloudHeader extends Struct {
   // Currently the storedMatrix is bugged and off by one
   // work around this by taking the 5th index value, set as the first,
   // then copy the rest -1 of the values to the list
-  List<double> get storedMatrixList {
+  List<double> get storedMatrix {
     List<double> list = new List(16);
-    list[0] = storedMatrix[4];
-    for (int i = 1; i < storedMatrix.length; i++) {
-      list[i] = storedMatrix[i - 1];
+    list[0] = _storedMatrix[4];
+    for (int i = 1; i < _storedMatrix.length; i++) {
+      list[i] = _storedMatrix[i - 1];
     }
     return list;
   }
 
-  get storedMatrix =>
+  get _storedMatrix =>
       _ArrayHelper_udPointCloudHeader_storedMatrix(this, [16], 0, 0);
 
   get baseOffset => _ArrayHelper_udPointCloudHeader_baseOffset(this, [3], 0, 0);
