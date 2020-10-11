@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../auth/sceneViewer.dart';
+import './RecentModels.dart';
 
 class UdsModel extends StatelessWidget {
   final ModelType type;
   final String location; // either URL or filePath
   final String name;
 
-  UdsModel({Key key, this.type, this.location})
+  UdsModel({Key key, this.location})
       : this.name = _parseName(location),
+        this.type = _determineType(location),
         super(key: key);
+
+  static ModelType _determineType(String location) {
+    // Not great validation but just checking if http:// or /local
+    final isUrl = location.split('/').first == 'http::';
+    return isUrl ? ModelType.url : ModelType.filePath;
+  }
 
   /// Returns the filename of a file from url or filePath
   static String _parseName(String location) {
@@ -32,6 +40,7 @@ class UdsModel extends StatelessWidget {
   }
 
   _onPressed(context) {
+    RecentModels.updateStoredList(this.location);
     // Go to scene viewer page, providing file location
     Navigator.pushNamed(
       context,
@@ -43,21 +52,28 @@ class UdsModel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor = Theme.of(context).primaryColor;
-
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(
-              _iconImage(),
-              color: iconColor,
-            ),
-            tooltip: 'Open in Scene Viewer',
-            onPressed: _onPressed(context),
+    // return Container(child: Text(name));
+    return Card(
+      child: InkWell(
+        onTap: () => _onPressed(context),
+        child: Container(
+          height: 90,
+          width: 90,
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _iconImage(),
+                color: iconColor,
+              ),
+              Text(
+                this.name,
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          Text(this.name),
-        ],
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:Pointfluent/widgets/RecentModels.dart';
 import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -27,6 +28,11 @@ class _HomePageState extends State<HomePage> {
     // Currently doing this on Android limits the selection to photos for some reason
     // getFilePath(type: FileType.custom, allowedExtensions: ['uds']);
 
+    // Catch if the user entered the dialog and then tapped the back key
+    // this will return the user to the home screen without error
+    if (filePath == null) return;
+
+    RecentModels.updateStoredList(filePath);
     Navigator.pushNamed(
       context,
       SceneViewerPage.routeName,
@@ -50,28 +56,32 @@ class _HomePageState extends State<HomePage> {
             color: Color.fromRGBO(24, 189, 210, 1.0),
             child: ListTile(
               title: Text(
-                'Enter Scene Viewer',
+                'Load file',
                 style: const TextStyle(
                     color: Colors.white, fontSize: 18, letterSpacing: -0.3),
               ),
               trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+              onTap: () => _handleFileSelect(),
             ),
           ),
           MenuItem(
-              title: 'Most Recent',
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => _handleFileSelect(),
-              margin: const EdgeInsets.only(top: marginTop),),
+            title: 'Most Recent',
+            trailing: Icon(Icons.keyboard_arrow_right),
+            margin: const EdgeInsets.only(top: marginTop),
+            childWidget: RecentModels(),
+          ),
           MenuItem(
-              title: 'Settings',
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.pushNamed(context, '/settings'),
-              margin: const EdgeInsets.only(top: marginTop),),
+            title: 'Settings',
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () => Navigator.pushNamed(context, '/settings'),
+            margin: const EdgeInsets.only(top: marginTop),
+          ),
           MenuItem(
-              title: 'Logout',
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.popAndPushNamed(context, '/'),
-              margin: const EdgeInsets.only(top: marginTop),),
+            title: 'Logout',
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () => Navigator.popAndPushNamed(context, '/'),
+            margin: const EdgeInsets.only(top: marginTop),
+          ),
         ],
       ),
     );
