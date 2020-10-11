@@ -5,7 +5,7 @@ import 'package:vaultSDK/udManager.dart';
 import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
-import 'auth/SceneViewer.dart';
+import 'auth/sceneViewer.dart';
 
 void main() {
   runApp(MyApp());
