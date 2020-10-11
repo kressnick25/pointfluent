@@ -29,6 +29,10 @@ class UdRenderContext extends UdSDKClass {
     return this._renderContext[0];
   }
 
+  void setRenderInstancePointCloud(UdPointCloud pointCloud) {
+    this.renderInstance.pPointCloud = Pointer.fromAddress(pointCloud.address);
+  }
+
   /// Create an instance of `udRenderContext` for rendering
   void create(UdContext udContext) {
     checkMounted();
@@ -43,7 +47,7 @@ class UdRenderContext extends UdSDKClass {
   }
 
   /// Render the models from the persepective of `pRenderView`
-  void render(UdRenderTarget renderTarget, int modelCount) {
+  void render(UdRenderTarget renderTarget, {int modelCount = 1}) {
     checkMounted();
     assert(this.address != null);
     assert(renderTarget.address != null);
@@ -240,6 +244,7 @@ class udRenderInstance extends Struct {
   void setMatrix(List<double> values) {
     for (int i = 0; i < 16; i++) {
       storedMatrix[i] = values[i];
+      assert(storedMatrix[i] != null);
     }
   }
 

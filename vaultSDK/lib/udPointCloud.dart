@@ -175,8 +175,20 @@ class udPointCloudHeader extends Struct {
   factory udPointCloudHeader.allocate() => allocate<udPointCloudHeader>().ref
     ..attributes = udAttributeSet.allocate().addressOf;
 
-  get storedMatrix =>
-      _ArrayHelper_udPointCloudHeader_storedMatrix(this, [3], 0, 0);
+  // Currently the storedMatrix is bugged and off by one
+  // work around this by taking the 5th index value, set as the first,
+  // then copy the rest -1 of the values to the list
+  List<double> get storedMatrix {
+    List<double> list = new List(16);
+    list[0] = _storedMatrix[4];
+    for (int i = 1; i < _storedMatrix.length; i++) {
+      list[i] = _storedMatrix[i - 1];
+    }
+    return list;
+  }
+
+  get _storedMatrix =>
+      _ArrayHelper_udPointCloudHeader_storedMatrix(this, [16], 0, 0);
 
   get baseOffset => _ArrayHelper_udPointCloudHeader_baseOffset(this, [3], 0, 0);
 
@@ -197,7 +209,7 @@ class _ArrayHelper_udPointCloudHeader_storedMatrix extends ArrayHelper {
 
   operator [](int index) {
     checkBounds(index);
-    switch (absoluteIndex + index) {
+    switch (index) {
       case 0:
         return struct._storedMatrix_0;
       case 1:
@@ -237,7 +249,7 @@ class _ArrayHelper_udPointCloudHeader_storedMatrix extends ArrayHelper {
 
   void operator []=(int index, value) {
     checkBounds(index);
-    switch (absoluteIndex + index) {
+    switch (index) {
       case 0:
         struct._storedMatrix_0 = value;
         break;

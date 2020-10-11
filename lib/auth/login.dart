@@ -7,8 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vaultSDK/udContext.dart';
-import 'package:vaultSDK/udConfig.dart';
+import 'package:vaultSDK/udManager.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,10 +24,10 @@ class AuthDetails {
 }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.udContext}) : super(key: key);
+  LoginPage({Key key, this.udManager}) : super(key: key);
 
   static const routeName = '/';
-  final UdContext udContext;
+  final UdManager udManager;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -52,6 +51,11 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _rememberMeState();
     _certValState();
+    _setupUdManager();
+  }
+
+  _setupUdManager() async {
+    await widget.udManager.setup();
   }
 
   _rememberMeState() async {
@@ -117,9 +121,9 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     // bind local state to udConfig state
-    UdConfig.ignoreCertificateVerification(_ignoreCert);
+    await widget.udManager.setIgnoreCertificate(_ignoreCert);
     try {
-      widget.udContext.connect(user.username, user.password);
+      await widget.udManager.login(user.username, user.password);
 
       setState(() {
         _error.message = null;

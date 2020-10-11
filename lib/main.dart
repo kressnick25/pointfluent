@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vaultSDK/udContext.dart';
+import 'package:vaultSDK/udManager.dart';
 
 import 'auth/login.dart';
 import 'auth/home.dart';
 import 'auth/settings.dart';
+import 'auth/sceneViewer.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,6 +13,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final udContext = UdContext();
+  final udManager = UdManager();
 
   // This widget is the root of your application.
   @override
@@ -45,10 +48,11 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           LoginPage.routeName: (context) => LoginPage(
-                udContext: udContext,
+                udManager: udManager,
               ),
-          HomePage.routeName: (context) => HomePage(
-                udContext: udContext,
+          HomePage.routeName: (context) => HomePage(),
+          SceneViewerPage.routeName: (context) => SceneViewerPage(
+                udManager: udManager,
               ),
           SettingsPage.routeName: (context) => SettingsPage(),
         });

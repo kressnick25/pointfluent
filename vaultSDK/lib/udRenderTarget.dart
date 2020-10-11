@@ -14,9 +14,12 @@ class UdRenderTarget extends UdSDKClass {
   Pointer<IntPtr> _renderTarget;
   Pointer<Int64> _colorBuffer;
   Pointer<Float> _depthBuffer;
+  final int width;
+  final int height;
   final int _bufferLength;
 
-  UdRenderTarget(this._bufferLength) {
+  UdRenderTarget(this.width, this.height)
+      : this._bufferLength = width * height {
     this._renderTarget = allocate();
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
@@ -40,9 +43,8 @@ class UdRenderTarget extends UdSDKClass {
     return this._depthBuffer.asTypedList(_bufferLength);
   }
 
-  /// Create a udRenderTarget with a viewport using `width` and `height`.
-  void create(UdContext udContext, UdRenderContext renderContext, int width,
-      int height) {
+  /// Create a udRenderTarget with a viewport
+  void create(UdContext udContext, UdRenderContext renderContext) {
     checkMounted();
     final ppRenderTarget =
         Pointer.fromAddress(_renderTarget.address).cast<IntPtr>();
@@ -50,8 +52,8 @@ class UdRenderTarget extends UdSDKClass {
       udContext.address,
       ppRenderTarget,
       renderContext.address,
-      width,
-      height,
+      this.width,
+      this.height,
     ));
   }
 
@@ -63,10 +65,10 @@ class UdRenderTarget extends UdSDKClass {
   }
 
   /// Set a memory buffers that a render target will write to.
-  void setTargets([int colorClearValue = 0]) {
+  void setTargets({int colorClearValue = 0}) {
     checkMounted();
-    final pColorBuffer = _colorBuffer.cast<Void>();
-    final pDepthBuffer = _depthBuffer.cast<Void>();
+    final pColorBuffer = _colorBuffer;
+    final pDepthBuffer = _depthBuffer;
     handleUdError(_udRenderTarget_SetTargets(
         _renderTarget[0], pColorBuffer, colorClearValue, pDepthBuffer));
   }
@@ -177,9 +179,9 @@ final _udRenderTarget_Destroy =
 // C declaration: udError udRenderTarget_SetTargets(struct udRenderTarget *pRenderTarget, void *pColorBuffer, uint32_t colorClearValue, void *pDepthBuffer);
 // TODO maybe change the Point<Void> to IntPtr ??
 typedef _udRenderTarget_SetTargets_native = Int32 Function(
-    IntPtr, Pointer<Void>, Uint32, Pointer<Void>);
+    IntPtr, Pointer, Uint32, Pointer);
 typedef _udRenderTarget_SetTargets_dart = int Function(
-    int, Pointer<Void>, int, Pointer<Void>);
+    int, Pointer, int, Pointer);
 final _udRenderTarget_SetTargetsPointer =
     udSdkLib.lookup<NativeFunction<_udRenderTarget_SetTargets_native>>(
         'udRenderTarget_SetTargets');
