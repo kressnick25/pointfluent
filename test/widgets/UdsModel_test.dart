@@ -14,7 +14,6 @@ void main() {
     test('url', () {
       const location = "https://euclideon.test.com/DirCube.uds";
       final model = new UdsModel(
-        type: ModelType.url,
         location: location,
       );
 
@@ -26,7 +25,6 @@ void main() {
     test('filePath', () {
       const location = "/data/data/src.com.file.example/files/Axis.UDS";
       final model = new UdsModel(
-        type: ModelType.filePath,
         location: location,
       );
 
@@ -39,7 +37,6 @@ void main() {
       const location = "https://euclideon.test.com/DirCube.obj";
       expect(
         () => new UdsModel(
-          type: ModelType.url,
           location: location,
         ),
         throwsFormatException,
