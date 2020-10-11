@@ -2,10 +2,7 @@ import 'package:Pointfluent/widgets/RecentModels.dart';
 import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
-import 'dart:io';
-import 'dart:async';
-import 'dart:developer';
+import 'package:provider/provider.dart';
 
 import '../widgets/ErrorMsg.dart';
 import '../auth/sceneViewer.dart';
@@ -32,7 +29,9 @@ class _HomePageState extends State<HomePage> {
     // this will return the user to the home screen without error
     if (filePath == null) return;
 
-    RecentModels.updateStoredList(filePath);
+    var recentFiles = context.read<RecentModelsData>();
+    recentFiles.add(filePath);
+
     Navigator.pushNamed(
       context,
       SceneViewerPage.routeName,
@@ -68,7 +67,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Most Recent',
             trailing: Icon(Icons.keyboard_arrow_right),
             margin: const EdgeInsets.only(top: marginTop),
-            childWidget: RecentModels(),
+            childWidget: RecentModelsView(),
           ),
           MenuItem(
             title: 'Settings',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../auth/sceneViewer.dart';
 import './RecentModels.dart';
@@ -15,7 +16,8 @@ class UdsModel extends StatelessWidget {
 
   static ModelType _determineType(String location) {
     // Not great validation but just checking if http:// or /local
-    final isUrl = location.split('/').first == 'http::';
+    final split = location.split(':');
+    final isUrl = split.first == 'http' || split.first == 'https';
     return isUrl ? ModelType.url : ModelType.filePath;
   }
 
@@ -40,7 +42,9 @@ class UdsModel extends StatelessWidget {
   }
 
   _onPressed(context) {
-    RecentModels.updateStoredList(this.location);
+    var recentFiles = Provider.of<RecentModelsData>(context, listen: false);
+    recentFiles.add(this.location);
+
     // Go to scene viewer page, providing file location
     Navigator.pushNamed(
       context,
