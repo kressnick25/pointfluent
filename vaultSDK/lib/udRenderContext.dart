@@ -13,6 +13,7 @@ class UdRenderContext extends UdSDKClass {
   udRenderInstance renderInstance;
   udRenderSettings renderSettings;
   udRenderPicking renderPicking;
+  bool loaded; // true if this.create() has been called.
 
   UdRenderContext() {
     this._renderContext = allocate();
@@ -20,6 +21,7 @@ class UdRenderContext extends UdSDKClass {
     this.renderInstance = udRenderInstance.allocate();
     this.renderPicking = udRenderPicking.allocate();
     this.renderSettings = udRenderSettings.allocate();
+    this.loaded = false;
     _nullChecks();
     setMounted();
   }
@@ -37,12 +39,15 @@ class UdRenderContext extends UdSDKClass {
   void create(UdContext udContext) {
     checkMounted();
     handleUdError(_udRenderContext_Create(udContext.address, _renderContext));
+    this.loaded = true;
   }
 
   /// Destroy the instance of the renderer
   void destroy() {
     checkMounted();
-    handleUdError(_udRenderContext_Destroy(_renderContext));
+    if (loaded) {
+      handleUdError(_udRenderContext_Destroy(_renderContext));
+    }
     this.dispose();
   }
 

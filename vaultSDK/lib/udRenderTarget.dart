@@ -17,12 +17,14 @@ class UdRenderTarget extends UdSDKClass {
   final int width;
   final int height;
   final int _bufferLength;
+  bool loaded; // true if this.create() has been called.
 
   UdRenderTarget(this.width, this.height)
       : this._bufferLength = width * height {
     this._renderTarget = allocate();
     this._colorBuffer = allocate(count: _bufferLength);
     this._depthBuffer = allocate(count: _bufferLength);
+    this.loaded = false;
 
     _nullChecks();
     setMounted();
@@ -55,12 +57,15 @@ class UdRenderTarget extends UdSDKClass {
       this.width,
       this.height,
     ));
+    this.loaded = true;
   }
 
   /// Destroys the instance of `ppRenderTarget`.
   void destroy() {
     checkMounted();
-    handleUdError(_udRenderTarget_Destroy(_renderTarget));
+    if (this.loaded) {
+      handleUdError(_udRenderTarget_Destroy(_renderTarget));
+    }
     this.dispose();
   }
 

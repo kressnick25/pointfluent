@@ -10,10 +10,12 @@ import 'udContext.dart';
 class UdPointCloud extends UdSDKClass {
   Pointer<IntPtr> _pointCloud;
   udPointCloudHeader header;
+  bool loaded;
 
   UdPointCloud() {
     this._pointCloud = allocate();
     this.header = udPointCloudHeader.allocate();
+    this.loaded = false;
     _nullChecks();
     setMounted();
   }
@@ -32,12 +34,16 @@ class UdPointCloud extends UdSDKClass {
     free(pModelLocation);
 
     handleUdError(err);
+    this.loaded = true;
   }
 
   /// Destroys the udPointCloud.
   void unLoad() {
     checkMounted();
-    handleUdError(_udPointCloud_Unload(this._pointCloud));
+    if (loaded) {
+      handleUdError(_udPointCloud_Unload(this._pointCloud));
+    }
+    this.dispose();
   }
 
   /// Update the udPointCloudHeader of this class
@@ -50,7 +56,6 @@ class UdPointCloud extends UdSDKClass {
   void dispose() {
     checkMounted();
     free(this._pointCloud);
-    free(this.header.attributes[0].pDescriptors);
     free(this.header.addressOf);
     super.dispose();
   }
