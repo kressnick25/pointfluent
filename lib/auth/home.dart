@@ -1,6 +1,7 @@
 import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:vaultSDK/udManager.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:async';
@@ -10,7 +11,9 @@ import '../widgets/ErrorMsg.dart';
 import '../auth/sceneViewer.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final UdManager udManager;
+
+  HomePage({Key key, this.udManager}) : super(key: key);
   static const routeName = '/home';
 
   @override
@@ -32,6 +35,11 @@ class _HomePageState extends State<HomePage> {
       SceneViewerPage.routeName,
       arguments: SceneViewerArgs(filePath),
     );
+  }
+
+  _handleLogout(context) async {
+    await widget.udManager.logout();
+    Navigator.popAndPushNamed(context, '/');
   }
 
   @override
@@ -58,20 +66,23 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           MenuItem(
-              title: 'Most Recent',
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => _handleFileSelect(),
-              margin: const EdgeInsets.only(top: marginTop),),
+            title: 'Most Recent',
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () => _handleFileSelect(),
+            margin: const EdgeInsets.only(top: marginTop),
+          ),
           MenuItem(
-              title: 'Settings',
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.pushNamed(context, '/settings'),
-              margin: const EdgeInsets.only(top: marginTop),),
+            title: 'Settings',
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () => Navigator.pushNamed(context, '/settings'),
+            margin: const EdgeInsets.only(top: marginTop),
+          ),
           MenuItem(
-              title: 'Logout',
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () => Navigator.popAndPushNamed(context, '/'),
-              margin: const EdgeInsets.only(top: marginTop),),
+            title: 'Logout',
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () => _handleLogout(context),
+            margin: const EdgeInsets.only(top: marginTop),
+          ),
         ],
       ),
     );
