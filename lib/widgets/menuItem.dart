@@ -6,10 +6,17 @@ class MenuItem extends StatelessWidget {
   final Widget trailing;
   final GestureTapCallback onTap;
   final EdgeInsetsGeometry margin;
-  final dynamic childWidget;
+  final Widget child;
+  final bool isLoading;
 
   MenuItem(
-      {this.title, this.trailing, this.onTap, this.margin, this.childWidget});
+      {this.title,
+      this.trailing,
+      this.onTap,
+      this.margin,
+      this.child,
+      bool isLoading})
+      : this.isLoading = isLoading ?? false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +30,11 @@ class MenuItem extends StatelessWidget {
               this.title,
               style: const TextStyle(fontSize: 16, letterSpacing: -0.3),
             ),
-            trailing: this.trailing,
+            trailing:
+                this.isLoading ? CircularProgressIndicator() : this.trailing,
             onTap: this.onTap,
           ),
-          this.childWidget ?? emptyWidget,
+          this.child ?? emptyWidget,
         ],
       ),
     );

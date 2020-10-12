@@ -58,7 +58,9 @@ class MyApp extends StatelessWidget {
           LoginPage.routeName: (context) => LoginPage(
                 udManager: udManager,
               ),
-          HomePage.routeName: (context) => HomePage(),
+          HomePage.routeName: (context) => HomePage(
+                udManager: udManager,
+              ),
           SceneViewerPage.routeName: (context) => SceneViewerPage(
                 udManager: udManager,
               ),

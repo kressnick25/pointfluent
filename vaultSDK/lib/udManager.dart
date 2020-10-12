@@ -69,7 +69,7 @@ class _UdManager extends UdSDKClass {
   @override
   void dispose() {
     pointCloud.unLoad();
-    renderTarget.destroy();
+    renderTarget?.destroy();
     renderContext.destroy();
     udContext.disconnect();
     super.dispose();
@@ -199,10 +199,11 @@ class UdManager extends UdSDKClass {
   ReceivePort _mainRPort;
   SendPort _echoPort;
 
-  UdManager() : this._mainRPort = ReceivePort();
+  UdManager();
 
   /// spawn the child Isolate and get the sendPort
   Future setup() async {
+    this._mainRPort = ReceivePort();
     await Isolate.spawn(_spawnIsolate, _mainRPort.sendPort);
     _echoPort = await _mainRPort.first;
   }
@@ -254,6 +255,10 @@ class UdManager extends UdSDKClass {
   /// Render the loaded model and return the resulting color buffer
   Future<ByteBuffer> render() async {
     return await _sendFunction(ExecutableFunction(ManagerFns.render, []));
+  }
+
+  Future<void> logout() async {
+    await this.cleanup();
   }
 
   /// Free associated memory and close the child Isolate

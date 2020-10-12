@@ -3,12 +3,15 @@ import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:vaultSDK/udManager.dart';
 
 import '../widgets/ErrorMsg.dart';
 import '../auth/sceneViewer.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final UdManager udManager;
+
+  HomePage({Key key, this.udManager}) : super(key: key);
   static const routeName = '/home';
 
   @override
@@ -16,8 +19,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  ErrorMsg _error = ErrorMsg();
+  ErrorMsg _error;
+  bool logoutLoading;
   static const double marginTop = 12;
+
+  @override
+  void initState() {
+    _error = ErrorMsg();
+    logoutLoading = false;
+    super.initState();
+  }
 
   void _handleFileSelect() async {
     var filePath = await FilePicker.getFilePath(type: FileType.any);
@@ -37,6 +48,12 @@ class _HomePageState extends State<HomePage> {
       SceneViewerPage.routeName,
       arguments: SceneViewerArgs(filePath),
     );
+  }
+
+  _handleLogout(context) async {
+    setState(() => logoutLoading = true);
+    await widget.udManager.logout();
+    Navigator.popAndPushNamed(context, '/');
   }
 
   @override
@@ -67,7 +84,8 @@ class _HomePageState extends State<HomePage> {
             title: 'Most Recent',
             trailing: Icon(Icons.keyboard_arrow_right),
             margin: const EdgeInsets.only(top: marginTop),
-            childWidget: RecentModelsView(),
+            child: RecentModelsView(),
+            onTap: () => _handleFileSelect(),
           ),
           MenuItem(
             title: 'Settings',
@@ -78,8 +96,9 @@ class _HomePageState extends State<HomePage> {
           MenuItem(
             title: 'Logout',
             trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: () => Navigator.popAndPushNamed(context, '/'),
+            onTap: () => _handleLogout(context),
             margin: const EdgeInsets.only(top: marginTop),
+            isLoading: logoutLoading,
           ),
         ],
       ),
