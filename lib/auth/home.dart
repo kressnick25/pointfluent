@@ -21,8 +21,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  ErrorMsg _error = ErrorMsg();
+  ErrorMsg _error;
+  bool logoutLoading;
   static const double marginTop = 12;
+
+  @override
+  void initState() {
+    _error = ErrorMsg();
+    logoutLoading = false;
+    super.initState();
+  }
 
   void _handleFileSelect() async {
     var filePath = await FilePicker.getFilePath(type: FileType.any);
@@ -38,6 +46,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _handleLogout(context) async {
+    setState(() => logoutLoading = true);
     await widget.udManager.logout();
     Navigator.popAndPushNamed(context, '/');
   }
@@ -82,6 +91,7 @@ class _HomePageState extends State<HomePage> {
             trailing: Icon(Icons.keyboard_arrow_right),
             onTap: () => _handleLogout(context),
             margin: const EdgeInsets.only(top: marginTop),
+            isLoading: logoutLoading,
           ),
         ],
       ),
