@@ -9,12 +9,14 @@ import 'package:vaultSDK/udRenderContext.dart';
 import 'package:vaultSDK/udRenderTarget.dart';
 import 'package:vaultSDK/udSdkLib.dart';
 import 'package:vaultSDK/udConfig.dart';
+import 'package:vaultSDK/udUserUtil.dart';
 
 /// Internal synchronous version of UdManager, managed by Isolate
 class _UdManager extends UdSDKClass {
   final UdContext udContext;
   final UdPointCloud pointCloud;
   final UdRenderContext renderContext;
+  final UdUserUtil userUtil;
   UdRenderTarget renderTarget;
   static const List<double> defaultCameraMatrix = [
     1, 0, 0, 0, //
@@ -26,7 +28,8 @@ class _UdManager extends UdSDKClass {
   _UdManager()
       : this.udContext = UdContext(),
         this.pointCloud = UdPointCloud(),
-        this.renderContext = UdRenderContext();
+        this.renderContext = UdRenderContext(),
+        this.userUtil = UdUserUtil();
 
   void login(String email, String password) {
     this.udContext.connect(email, password);
@@ -62,6 +65,10 @@ class _UdManager extends UdSDKClass {
     UdConfig.ignoreCertificateVerification(val);
   }
 
+  void changePassword(String newPassword, oldPassword) {
+    this.userUtil.changePassword(newPassword, oldPassword);
+  }
+
   void test() {
     Function.apply(this.render, []);
   }
@@ -72,6 +79,7 @@ class _UdManager extends UdSDKClass {
     renderTarget?.destroy();
     renderContext.destroy();
     udContext.disconnect();
+    userUtil.destroy();
     super.dispose();
   }
 
@@ -86,6 +94,7 @@ abstract class ManagerFns {
   static const ignoreCert = "ignoreCert";
   static const render = "render";
   static const dispose = "dispose";
+  static const changePassword = "changePassword";
 
   static const allFns = [
     login,
@@ -93,7 +102,8 @@ abstract class ManagerFns {
     renderInit,
     ignoreCert,
     render,
-    dispose
+    dispose,
+    changePassword
   ];
 
   static bool contains(String functionName) {
@@ -146,6 +156,10 @@ abstract class ManagerFns {
           });
         }
         break;
+      case changePassword:
+        {
+          return handleError(() => manager.changePassword(params[0], params[1]));
+        }
       case dispose:
         {
           return handleError(() => manager.dispose());
