@@ -1,3 +1,4 @@
+import 'package:Pointfluent/util/SlidePageRoute.dart';
 import 'package:Pointfluent/widgets/RecentModels.dart';
 import 'package:flutter/material.dart';
 import 'package:vaultSDK/udContext.dart';
@@ -54,17 +55,23 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Roboto',
         ),
         initialRoute: '/',
-        routes: {
-          LoginPage.routeName: (context) => LoginPage(
-                udManager: udManager,
-              ),
-          HomePage.routeName: (context) => HomePage(
-                udManager: udManager,
-              ),
-          SceneViewerPage.routeName: (context) => SceneViewerPage(
-                udManager: udManager,
-              ),
-          SettingsPage.routeName: (context) => SettingsPage(),
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case LoginPage.routeName:
+              return SlidePageRoute(builder: (context) => LoginPage(udManager: udManager,), settings: settings);
+              break;
+            case HomePage.routeName:
+              return SlidePageRoute(builder: (context) => HomePage(udManager: udManager,), settings: settings);
+              break;
+            case SceneViewerPage.routeName:
+              return SlidePageRoute(
+                  builder: (context) =>
+                      SceneViewerPage(udManager: udManager,), settings: settings);
+              break;
+            case SettingsPage.routeName:
+              return SlidePageRoute(builder: (context) => SettingsPage(), settings: settings);
+              break;
+          }
         });
   }
 }
