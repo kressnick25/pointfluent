@@ -1,6 +1,8 @@
+import 'package:Pointfluent/widgets/RecentModels.dart';
 import 'package:flutter/material.dart';
 import 'package:vaultSDK/udContext.dart';
 import 'package:vaultSDK/udManager.dart';
+import 'package:provider/provider.dart';
 
 import 'auth/login.dart';
 import 'auth/home.dart';
@@ -8,7 +10,12 @@ import 'auth/settings.dart';
 import 'auth/sceneViewer.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => RecentModelsData(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +49,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: customColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           backgroundColor: Colors.white,
-          scaffoldBackgroundColor: Color(0xfff8f8f8), // background color for menu
+          scaffoldBackgroundColor:
+              Color(0xfff8f8f8), // background color for menu
           fontFamily: 'Roboto',
         ),
         initialRoute: '/',

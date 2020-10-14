@@ -1,11 +1,9 @@
+import 'package:Pointfluent/widgets/RecentModels.dart';
 import 'package:Pointfluent/widgets/menuItem.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:vaultSDK/udManager.dart';
-import 'package:flutter/services.dart';
-import 'dart:io';
-import 'dart:async';
-import 'dart:developer';
 
 import '../widgets/ErrorMsg.dart';
 import '../auth/sceneViewer.dart';
@@ -38,6 +36,13 @@ class _HomePageState extends State<HomePage> {
     // Currently doing this on Android limits the selection to photos for some reason
     // getFilePath(type: FileType.custom, allowedExtensions: ['uds']);
 
+    // Catch if the user entered the dialog and then tapped the back key
+    // this will return the user to the home screen without error
+    if (filePath == null) return;
+
+    var recentFiles = context.read<RecentModelsData>();
+    recentFiles.add(filePath);
+
     Navigator.pushNamed(
       context,
       SceneViewerPage.routeName,
@@ -67,18 +72,20 @@ class _HomePageState extends State<HomePage> {
             color: Color.fromRGBO(24, 189, 210, 1.0),
             child: ListTile(
               title: Text(
-                'Enter Scene Viewer',
+                'Load file',
                 style: const TextStyle(
                     color: Colors.white, fontSize: 18, letterSpacing: -0.3),
               ),
               trailing: Icon(Icons.keyboard_arrow_right, color: Colors.white),
+              onTap: () => _handleFileSelect(),
             ),
           ),
           MenuItem(
             title: 'Most Recent',
             trailing: Icon(Icons.keyboard_arrow_right),
-            onTap: () => _handleFileSelect(),
             margin: const EdgeInsets.only(top: marginTop),
+            child: RecentModelsView(),
+            onTap: () => _handleFileSelect(),
           ),
           MenuItem(
             title: 'Settings',
