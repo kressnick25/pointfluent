@@ -102,7 +102,6 @@ class _SceneViewerState extends State<SceneViewer> {
               return MatrixGestureDetector(
                 onMatrixUpdate:
                     (Matrix4 m, Matrix4 tm, Matrix4 sm, Matrix4 rm) {
-                  m.invert();
                   List<double> temp = m.storage.buffer.asFloat64List();
                   setState(() => cameraMatrix = temp);
                 },

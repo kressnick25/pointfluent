@@ -22,7 +22,7 @@ class RenderView extends StatelessWidget {
       future: _colorBuffer,
       builder: (BuildContext context, AsyncSnapshot<ByteBuffer> snapshot) {
         if (snapshot.hasData) {
-          return BitmapImage(size, snapshot.data, quarterRotations: 0);
+          return BitmapImage(size, snapshot.data, quarterRotations: 1);
         } else if (snapshot.hasError) {
           return Text("Error");
         } else {

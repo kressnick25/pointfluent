@@ -46,8 +46,8 @@ class _UdManager extends UdSDKClass {
     renderTarget.setMatrix(
         udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);
 
-    // renderContext.renderSettings.flags =
-    //     udRenderContextFlags.udRCF_BlockingStreaming;
+    renderContext.renderSettings.flags =
+        udRenderContextFlags.udRCF_BlockingStreaming;
   }
 
   void updateCamera(List<double> newMatrix) {

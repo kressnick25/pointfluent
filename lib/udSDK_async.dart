@@ -41,7 +41,7 @@ void main() async {
 
   await manager.renderInit(width, height);
 
-  final buffer = await manager.render();
+  final buffer = await manager.render(cameraMatrix);
 
   Bitmap bitmap = Bitmap.fromHeadless(width, height, buffer.asUint8List());
   final headedBitmap = bitmap.buildHeaded();
