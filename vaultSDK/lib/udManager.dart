@@ -46,15 +46,16 @@ class _UdManager extends UdSDKClass {
     renderTarget.setMatrix(
         udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);
 
-    renderContext.renderSettings.flags =
-        udRenderContextFlags.udRCF_BlockingStreaming;
+    // renderContext.renderSettings.flags =
+    //     udRenderContextFlags.udRCF_BlockingStreaming;
   }
 
   void updateCamera(List<double> newMatrix) {
     throw new Exception("Not Implemented");
   }
 
-  void render() {
+  void render(List<double> cameraMatrix) {
+    renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, cameraMatrix);
     this.renderContext.render(renderTarget);
   }
 
@@ -140,7 +141,7 @@ abstract class ManagerFns {
       case render:
         {
           return handleError(() {
-            manager.render();
+            manager.render(params[0]);
             return manager
                 .colorBuffer; // TODO copy to new array or use TransferableByteData
           });
@@ -253,8 +254,9 @@ class UdManager extends UdSDKClass {
   }
 
   /// Render the loaded model and return the resulting color buffer
-  Future<ByteBuffer> render() async {
-    return await _sendFunction(ExecutableFunction(ManagerFns.render, []));
+  Future<ByteBuffer> render(List<double> cameraMatrix) async {
+    return await _sendFunction(
+        ExecutableFunction(ManagerFns.render, [cameraMatrix]));
   }
 
   Future<void> logout() async {

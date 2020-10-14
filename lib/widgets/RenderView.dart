@@ -7,24 +7,14 @@ import './BitmapImage.dart';
 import 'dart:typed_data';
 
 /// Render a pointCloud and display the resulting buffer as an Image widget
-class RenderView extends StatefulWidget {
+class RenderView extends StatelessWidget {
   final UdManager udManager;
   final Size size;
+  final List<double> cameraMatrix;
+  final Future<ByteBuffer> _colorBuffer;
 
-  const RenderView(this.udManager, this.size);
-
-  @override
-  _RenderViewState createState() => _RenderViewState();
-}
-
-class _RenderViewState extends State<RenderView> {
-  Future<ByteBuffer> _colorBuffer;
-
-  @override
-  void initState() {
-    _colorBuffer = widget.udManager.render();
-    super.initState();
-  }
+  RenderView(this.udManager, this.size, this.cameraMatrix)
+      : _colorBuffer = udManager.render(cameraMatrix);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +22,7 @@ class _RenderViewState extends State<RenderView> {
       future: _colorBuffer,
       builder: (BuildContext context, AsyncSnapshot<ByteBuffer> snapshot) {
         if (snapshot.hasData) {
-          return BitmapImage(widget.size, snapshot.data, quarterRotations: 1);
+          return BitmapImage(size, snapshot.data, quarterRotations: 0);
         } else if (snapshot.hasError) {
           return Text("Error");
         } else {

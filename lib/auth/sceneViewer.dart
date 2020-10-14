@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:Pointfluent/auth/settings.dart';
 import 'package:Pointfluent/widgets/ErrorMsg.dart';
 import 'package:flutter/material.dart';
 import 'package:vaultSDK/udManager.dart';
+import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
+import 'package:flutter/services.dart';
 
 import '../widgets/RenderView.dart';
 import '../util/Size.dart';
@@ -53,7 +56,7 @@ class SceneViewer extends StatefulWidget {
     1, 0, 0, 0, //
     0, 1, 0, 0, //
     0, 0, 1, 0, //
-    5, -75, 5, 1 //
+    0, -5, 0, 1 //
   ];
 
   /// Create a SceneViewer as well as a renderContext, renderTarget and load a pointCloud
@@ -68,6 +71,7 @@ class SceneViewer extends StatefulWidget {
 class _SceneViewerState extends State<SceneViewer> {
   List<double> cameraMatrix;
   Future<bool> init;
+
   @override
   void initState() {
     super.initState();
@@ -95,7 +99,16 @@ class _SceneViewerState extends State<SceneViewer> {
           future: init,
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
             if (snapshot.hasData) {
-              return RenderView(widget.udManager, widget.dimensions);
+              return MatrixGestureDetector(
+                onMatrixUpdate:
+                    (Matrix4 m, Matrix4 tm, Matrix4 sm, Matrix4 rm) {
+                  m.invert();
+                  List<double> temp = m.storage.buffer.asFloat64List();
+                  setState(() => cameraMatrix = temp);
+                },
+                child: RenderView(
+                    widget.udManager, widget.dimensions, cameraMatrix),
+              );
             } else if (snapshot.hasError) {
               return Text("Error");
             } else {
