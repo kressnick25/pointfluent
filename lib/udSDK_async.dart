@@ -40,8 +40,9 @@ void main() async {
   await manager.loadModel(modelName);
 
   await manager.renderInit(width, height);
+  await manager.updateCamera(cameraMatrix);
 
-  final buffer = await manager.render(cameraMatrix);
+  final buffer = await manager.render();
 
   Bitmap bitmap = Bitmap.fromHeadless(width, height, buffer.asUint8List());
   final headedBitmap = bitmap.buildHeaded();

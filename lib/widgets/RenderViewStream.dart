@@ -15,7 +15,6 @@ const renderDelayMs = 70;
 class RenderViewStream extends StatelessWidget {
   final UdManager udManager;
   final Size size;
-  final List<double> cameraMatrix;
 
   /// Convert render Future to a stream that emits a ByteBuffer every renderDelay(ms)
   //
@@ -27,11 +26,11 @@ class RenderViewStream extends StatelessWidget {
   //  an arbitrary amount of time.
   Stream<ByteBuffer> _colorBufferStream() async* {
     yield* Stream.periodic(Duration(milliseconds: renderDelayMs), (_) async {
-      return await udManager.render(cameraMatrix);
+      return await udManager.render();
     }).asyncMap((event) async => await event);
   }
 
-  RenderViewStream(this.udManager, this.size, this.cameraMatrix);
+  RenderViewStream(this.udManager, this.size);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,7 @@ class RenderViewStream extends StatelessWidget {
       stream: _colorBufferStream(),
       builder: (context, AsyncSnapshot<ByteBuffer> snapshot) {
         if (snapshot.hasData) {
-          return BitmapImage(size, snapshot.data, quarterRotations: 1);
+          return BitmapImage(size, snapshot.data, quarterRotations: 0);
         } else if (snapshot.hasError) {
           return Text("Error");
         } else {

@@ -53,11 +53,10 @@ class _UdManager extends UdSDKClass {
   }
 
   void updateCamera(List<double> newMatrix) {
-    throw new Exception("Not Implemented");
+    renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, newMatrix);
   }
 
-  void render(List<double> cameraMatrix) {
-    renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, cameraMatrix);
+  void render() {
     this.renderContext.render(renderTarget);
   }
 
@@ -89,6 +88,7 @@ abstract class ManagerFns {
   static const ignoreCert = "ignoreCert";
   static const render = "render";
   static const dispose = "dispose";
+  static const updateCamera = "updateCamera";
 
   static const allFns = [
     login,
@@ -96,7 +96,8 @@ abstract class ManagerFns {
     renderInit,
     ignoreCert,
     render,
-    dispose
+    dispose,
+    updateCamera,
   ];
 
   static bool contains(String functionName) {
@@ -144,12 +145,16 @@ abstract class ManagerFns {
       case render:
         {
           return handleError(() {
-            manager.render(params[0]);
+            manager.render();
             return manager
                 .colorBuffer; // TODO copy to new array or use TransferableByteData
           });
         }
         break;
+      case updateCamera:
+        {
+          return handleError(() => manager.updateCamera(params[0]));
+        }
       case dispose:
         {
           return handleError(() => manager.dispose());
@@ -248,7 +253,8 @@ class UdManager extends UdSDKClass {
 
   /// Update the camera matrix of this render object
   Future<void> updateCamera(List<double> newMatrix) async {
-    throw new Exception("Not Implemented");
+    await _sendFunction(
+        ExecutableFunction(ManagerFns.updateCamera, [newMatrix]));
   }
 
   /// Set udSDK config to ignore certificate security
@@ -257,9 +263,8 @@ class UdManager extends UdSDKClass {
   }
 
   /// Render the loaded model and return the resulting color buffer
-  Future<ByteBuffer> render(List<double> cameraMatrix) async {
-    return await _sendFunction(
-        ExecutableFunction(ManagerFns.render, [cameraMatrix]));
+  Future<ByteBuffer> render() async {
+    return await _sendFunction(ExecutableFunction(ManagerFns.render, []));
   }
 
   Future<void> logout() async {

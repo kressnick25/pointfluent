@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:io';
 
 import 'package:Pointfluent/auth/settings.dart';
 import 'package:Pointfluent/widgets/ErrorMsg.dart';
@@ -40,7 +41,7 @@ class SceneViewerPage extends StatelessWidget {
       child: SceneViewer(
         udManager,
         args.modelLocation,
-        Size(screenSize.height.toInt(), screenSize.width.toInt()),
+        Size(screenSize.width.toInt(), screenSize.height.toInt()),
       ),
     );
   }
@@ -69,13 +70,11 @@ class SceneViewer extends StatefulWidget {
 // This widget stores the cameraMatrix as state, so when we update the
 // camera matrix it will trigger a widget re-render
 class _SceneViewerState extends State<SceneViewer> {
-  List<double> cameraMatrix;
   Future<bool> init;
 
   @override
   void initState() {
     super.initState();
-    cameraMatrix = SceneViewer.defaultCameraMatrix;
     init =
         _initRender(widget.modelLocation, widget.dimensions, blocking: false);
   }
@@ -85,6 +84,9 @@ class _SceneViewerState extends State<SceneViewer> {
     await widget.udManager.loadModel(modelLocation);
     await widget.udManager
         .renderInit(dimensions.width, dimensions.height, blocking);
+    await widget.udManager.updateCamera(SceneViewer.defaultCameraMatrix);
+    // FIXME. App often crashes without this statement. This likely indicates an async issue.
+    sleep(Duration(milliseconds: 300));
     return true;
   }
 
@@ -106,10 +108,9 @@ class _SceneViewerState extends State<SceneViewer> {
                 onMatrixUpdate:
                     (Matrix4 m, Matrix4 tm, Matrix4 sm, Matrix4 rm) {
                   List<double> temp = m.storage.buffer.asFloat64List();
-                  setState(() => cameraMatrix = temp);
+                  widget.udManager.updateCamera(temp);
                 },
-                child: RenderViewStream(
-                    widget.udManager, widget.dimensions, cameraMatrix),
+                child: RenderViewStream(widget.udManager, widget.dimensions),
               );
             } else if (snapshot.hasError) {
               return Text("Error");
