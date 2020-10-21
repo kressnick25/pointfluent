@@ -19,6 +19,10 @@ class BitmapImage extends StatelessWidget {
     final headedBitmap = bitmap.buildHeaded();
 
     return RotatedBox(
-        quarterTurns: this.quarterRotations, child: Image.memory(headedBitmap));
+        quarterTurns: this.quarterRotations,
+        child: Image.memory(
+          headedBitmap,
+          gaplessPlayback: true,
+        ));
   }
 }
