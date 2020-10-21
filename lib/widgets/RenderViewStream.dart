@@ -11,9 +11,12 @@ import 'dart:typed_data';
 /// This variable controls the wait time between renders
 /// setting this to a lower variable will make the scene run smoother
 /// HOWEVER, if the value is set to low, nothing will be shown on screen.
-/// We find 32 to be a good comprimise between smoothness and
+/// We find 30 to be a good comprimise between smoothness and
 /// guaranteeing the app will work properly.
-const RENDER_DELAY_MS = 32;
+///
+/// Edit: This appears to be pretty unstable. Before it was set to 30 and was fine but
+/// now only works with 50...
+const RENDER_DELAY_MS = 50;
 
 /// Render a pointCloud and display the resulting buffer as an Image widget using Streams
 ///
@@ -32,6 +35,7 @@ class RenderViewStream extends StatelessWidget {
   // it would re-paint on each completed render rather than re-rendering after
   //  an arbitrary amount of time.
   Stream<ByteBuffer> _colorBufferStream() async* {
+    // TODO may need to unsubscribe this in dispose() function
     yield* Stream.periodic(Duration(milliseconds: RENDER_DELAY_MS), (_) async {
       return await udManager.render();
     }).asyncMap((event) async => await event);
