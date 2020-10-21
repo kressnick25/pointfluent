@@ -8,7 +8,7 @@ import 'package:vaultSDK/udManager.dart';
 import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
 import 'package:flutter/services.dart';
 
-import '../widgets/RenderView.dart';
+import '../widgets/RenderViewStream.dart';
 import '../util/Size.dart';
 
 // Parent widget is needed to get the model location from the navigator in the build function.
@@ -76,12 +76,15 @@ class _SceneViewerState extends State<SceneViewer> {
   void initState() {
     super.initState();
     cameraMatrix = SceneViewer.defaultCameraMatrix;
-    init = _initRender(widget.modelLocation, widget.dimensions);
+    init =
+        _initRender(widget.modelLocation, widget.dimensions, blocking: false);
   }
 
-  Future<bool> _initRender(String modelLocation, Size dimensions) async {
+  Future<bool> _initRender(String modelLocation, Size dimensions,
+      {bool blocking}) async {
     await widget.udManager.loadModel(modelLocation);
-    await widget.udManager.renderInit(dimensions.width, dimensions.height);
+    await widget.udManager
+        .renderInit(dimensions.width, dimensions.height, blocking);
     return true;
   }
 
@@ -105,7 +108,7 @@ class _SceneViewerState extends State<SceneViewer> {
                   List<double> temp = m.storage.buffer.asFloat64List();
                   setState(() => cameraMatrix = temp);
                 },
-                child: RenderView(
+                child: RenderViewStream(
                     widget.udManager, widget.dimensions, cameraMatrix),
               );
             } else if (snapshot.hasError) {
