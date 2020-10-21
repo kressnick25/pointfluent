@@ -36,7 +36,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  bool _ignoreCert = false;
   bool _isLoading = false;
   bool _rememberMe = false;
 
@@ -50,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
   initState() {
     super.initState();
     _rememberMeState();
-    _certValState();
     _setupUdManager();
   }
 
@@ -63,13 +61,6 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _rememberMe = (userPrefs.getBool('rememberme') ?? false);
       _emailController.text = (userPrefs.getString('email') ?? '');
-    });
-  }
-
-  _certValState() async {
-    userPrefs = await SharedPreferences.getInstance();
-    setState(() {
-      _ignoreCert = (userPrefs.getBool('certval') ?? false);
     });
   }
 
@@ -100,14 +91,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  _updateCertVal(bool value) {
-    setState(() {
-      _ignoreCert = !_ignoreCert;
-    });
-
-    userPrefs.setBool('certval', value);
-  }
-
   onSubmit() async {
     _formKey.currentState.save();
     setState(() {
@@ -121,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     // bind local state to udConfig state
-    await widget.udManager.setIgnoreCertificate(_ignoreCert);
+    await widget.udManager.setIgnoreCertificate(true);
     try {
       await widget.udManager.login(user.username, user.password);
 
@@ -304,17 +287,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                width: 500,
-                height: 50,
-                child: CheckboxListTile(
-                    title: Text('Ignore Certificate Security'),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: _ignoreCert,
-                    onChanged: (bool value) {
-                      _updateCertVal(value);
-                    }),
               ),
             ],
           ),
