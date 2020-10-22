@@ -4,17 +4,18 @@ Point cloud rendering on mobile using Euclideon's udSDK.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Install flutter -> [instructions](https://flutter.dev/docs/get-started/install)
 
-A few resources to get you started if this is your first Flutter project:
+Download Euclideon's [udSDK](https://www.euclideon.com/udsdk/)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Android
+- Copy the `android_arm64` and `android_x64` folders from `udSDK/lib/` into a new folder `vaultSDK/android/src/main/jniLibs`. 
+- Rename them to `arm64-v8a` and `x86_64` respectively.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### iOS
+ - TODO
+
+ Build & run the project using `flutter run`
 
 ## Code Style
-
 See [Effective Dart: Style](https://dart.dev/guides/language/effective-dart/style)
