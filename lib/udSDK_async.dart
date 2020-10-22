@@ -40,6 +40,7 @@ void main() async {
   await manager.loadModel(modelName);
 
   await manager.renderInit(width, height);
+  await manager.updateCamera(cameraMatrix);
 
   final buffer = await manager.render();
 

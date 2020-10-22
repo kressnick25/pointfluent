@@ -36,7 +36,7 @@ class _UdManager extends UdSDKClass {
     this.pointCloud.load(udContext, modelLocation);
   }
 
-  void renderInit(int width, int height) {
+  void renderInit(int width, int height, [bool blocking = true]) {
     this.renderContext.create(udContext);
     this.renderTarget = UdRenderTarget(width, height);
     renderTarget.create(udContext, renderContext);
@@ -46,12 +46,14 @@ class _UdManager extends UdSDKClass {
     renderTarget.setMatrix(
         udRenderTargetMatrix.udRTM_Camera, defaultCameraMatrix);
 
-    renderContext.renderSettings.flags =
-        udRenderContextFlags.udRCF_BlockingStreaming;
+    if (blocking) {
+      renderContext.renderSettings.flags =
+          udRenderContextFlags.udRCF_BlockingStreaming;
+    }
   }
 
   void updateCamera(List<double> newMatrix) {
-    throw new Exception("Not Implemented");
+    renderTarget.setMatrix(udRenderTargetMatrix.udRTM_Camera, newMatrix);
   }
 
   void render() {
@@ -86,6 +88,7 @@ abstract class ManagerFns {
   static const ignoreCert = "ignoreCert";
   static const render = "render";
   static const dispose = "dispose";
+  static const updateCamera = "updateCamera";
 
   static const allFns = [
     login,
@@ -93,7 +96,8 @@ abstract class ManagerFns {
     renderInit,
     ignoreCert,
     render,
-    dispose
+    dispose,
+    updateCamera,
   ];
 
   static bool contains(String functionName) {
@@ -129,7 +133,8 @@ abstract class ManagerFns {
         break;
       case renderInit:
         {
-          return handleError(() => manager.renderInit(params[0], params[1]));
+          return handleError(
+              () => manager.renderInit(params[0], params[1], params[2]));
         }
         break;
       case ignoreCert:
@@ -146,6 +151,10 @@ abstract class ManagerFns {
           });
         }
         break;
+      case updateCamera:
+        {
+          return handleError(() => manager.updateCamera(params[0]));
+        }
       case dispose:
         {
           return handleError(() => manager.dispose());
@@ -237,14 +246,15 @@ class UdManager extends UdSDKClass {
   }
 
   /// Setup udSDK objects before calling `render`
-  Future<void> renderInit(int width, int height) async {
+  Future<void> renderInit(int width, int height, [bool blocking = true]) async {
     await _sendFunction(
-        ExecutableFunction(ManagerFns.renderInit, [width, height]));
+        ExecutableFunction(ManagerFns.renderInit, [width, height, blocking]));
   }
 
   /// Update the camera matrix of this render object
   Future<void> updateCamera(List<double> newMatrix) async {
-    throw new Exception("Not Implemented");
+    await _sendFunction(
+        ExecutableFunction(ManagerFns.updateCamera, [newMatrix]));
   }
 
   /// Set udSDK config to ignore certificate security
