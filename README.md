@@ -1,6 +1,5 @@
 # Pointfluent
-
-Point cloud rendering on mobile using Euclideon's udSDK.
+Mobile cross-platform 3D point cloud rendering using Euclideon's udSDK.
 
 ## Getting Started
 
