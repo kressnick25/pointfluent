@@ -27,8 +27,8 @@ Future<File> writeBitmap(List<int> bytes) async {
 void main() async {
   final width = 1920;
   final height = 1080;
-  final username = "kressnick25@gmail.com"; // INSERT
-  final password = "Gizzhead12"; // INSERT
+  final username = ""; // INSERT
+  final password = ""; // INSERT
   final modelName = "https://models.euclideon.com/DirCube.uds";
 
   final manager = UdManager();
